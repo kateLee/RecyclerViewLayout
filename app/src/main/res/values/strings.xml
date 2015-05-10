@@ -1,0 +1,4 @@
+<resources>
+    <string name="app_name">RecyclerViewLayout</string>
+    <string name="option_switch_mode">option_switch_mode</string>
+</resources>
