@@ -111,7 +111,14 @@ public abstract class RecyclerViewWithHeaderListener extends RecyclerView.OnScro
             return ((LinearLayoutManager) layoutManager).findFirstVisibleItemPosition();
         }
         else if (layoutManager instanceof StaggeredGridLayoutManager) {
-            return ((StaggeredGridLayoutManager) layoutManager).findFirstVisibleItemPositions(null)[0];
+            int[] firstVisibleItems = ((StaggeredGridLayoutManager) layoutManager).findFirstVisibleItemPositions(null);
+            int firstVisibleItem = firstVisibleItems[0];
+            for (int tmp : firstVisibleItems) {
+                if (firstVisibleItem > tmp) {
+                    firstVisibleItem = tmp;
+                }
+            }
+            return firstVisibleItem;
         }
         throw new IllegalArgumentException("only support LinearLayoutManager and StaggeredGridLayoutManager");
     }

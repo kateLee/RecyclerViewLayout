@@ -27,6 +27,7 @@ public class RecyclerViewLayoutActivity extends ActionBarActivity {
 
     List<String> strings = new ArrayList<String>();
     Handler handler = new Handler();
+    boolean isAdjustHeader = true;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -79,7 +80,7 @@ public class RecyclerViewLayoutActivity extends ActionBarActivity {
                         recyclerViewLayout.setRefreshing(false);
                         mAdapter.enableLoadMore();
                     }
-                }, 100);
+                }, 500);
             }
         });
         mAdapter.setOnLoadMoreListener(new DataAdapter.OnLoadMoreListener() {
@@ -95,6 +96,7 @@ public class RecyclerViewLayoutActivity extends ActionBarActivity {
                         tmp.add("8");
                         tmp.add("9");
                         tmp.add("10");
+                        tmp.add("11");
 
                         strings.addAll(tmp);
                         mAdapter.notifyAdapterItemRangeInserted(strings.size() - tmp.size(), tmp.size());
@@ -102,37 +104,54 @@ public class RecyclerViewLayoutActivity extends ActionBarActivity {
 
                         mAdapter.disableLoadMore();
                     }
-                }, 100);
+                }, 500);
             }
         });
-        mAdapter.setLoadMoreView(LayoutInflater.from(this).inflate(R.layout.view_loadmore, null));
-//        mAdapter.setHeaderView(header = LayoutInflater.from(this).inflate(R.layout.view_header, null));
-        mAdapter.setFooterView(LayoutInflater.from(this).inflate(R.layout.view_footer, null));
-        recyclerViewLayout.setAdjustHeaderView(header = LayoutInflater.from(this).inflate(R.layout.view_header, null));
         mAdapter.enableLoadMore();
 
-        header.findViewById(R.id.linearlayout).setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                recyclerViewLayout.setLayoutManager(linearLayoutManager);
-            }
-        });
-        header.findViewById(R.id.gridlayout).setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                recyclerViewLayout.setLayoutManager(gridLayoutManager);
-            }
-        });
-        header.findViewById(R.id.staggeredgridlayout).setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                recyclerViewLayout.setLayoutManager(staggeredGridLayoutManager);
-            }
-        });
+        if (isAdjustHeader) {
+            recyclerViewLayout.setAdjustHeaderView(header = LayoutInflater.from(this).inflate(R.layout.view_header, null));
+            header.findViewById(R.id.linearlayout).setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    recyclerViewLayout.setLayoutManager(linearLayoutManager);
+                }
+            });
+            header.findViewById(R.id.gridlayout).setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    recyclerViewLayout.setLayoutManager(gridLayoutManager);
+                }
+            });
+            header.findViewById(R.id.staggeredgridlayout).setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    recyclerViewLayout.setLayoutManager(staggeredGridLayoutManager);
+                }
+            });
+        }
     }
 
     private class DataAdapter extends RecyclerViewLayout.Adapter<DataHolder> {
-    @Override
+        @Override
+        protected View onLoadMoreCreateView(ViewGroup viewGroup) {
+            return LayoutInflater.from(viewGroup.getContext()).inflate(R.layout.view_loadmore, viewGroup, false);
+        }
+
+        @Override
+        protected View onFooterCreateView(ViewGroup viewGroup) {
+            return LayoutInflater.from(viewGroup.getContext()).inflate(R.layout.view_footer, viewGroup, false);
+        }
+
+        @Override
+        protected View onHeaderCreateView(ViewGroup viewGroup) {
+            if (!isAdjustHeader) {
+                return LayoutInflater.from(viewGroup.getContext()).inflate(R.layout.view_header, viewGroup, false);
+            }
+            return super.onHeaderCreateView(viewGroup);
+        }
+
+        @Override
         protected DataHolder onAdapterCreateViewHolder(ViewGroup viewGroup, int viewType) {
             View view = LayoutInflater.from(viewGroup.getContext()).inflate(R.layout.view_item, viewGroup, false);
             return new DataHolder(view);
@@ -142,13 +161,39 @@ public class RecyclerViewLayoutActivity extends ActionBarActivity {
         protected void onAdapterBindViewHolder(DataHolder viewHolder, int position) {
             viewHolder.label.setText("position: " + strings.get(position));
             ViewGroup.LayoutParams layoutParams = viewHolder.itemView.getLayoutParams();
-            layoutParams.height = (position + 1) * 50;
+            layoutParams.height = 150 + (position + 1) * 10;
             viewHolder.itemView.setLayoutParams(layoutParams);
         }
 
         @Override
         public int getAdapterItemCount() {
             return strings.size();
+        }
+
+        @Override
+        protected void onHeaderBindViewHolder(RecyclerView.ViewHolder viewHolder) {
+            super.onHeaderBindViewHolder(viewHolder);
+
+            if (!isAdjustHeader) {
+                viewHolder.itemView.findViewById(R.id.linearlayout).setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        recyclerViewLayout.setLayoutManager(linearLayoutManager);
+                    }
+                });
+                viewHolder.itemView.findViewById(R.id.gridlayout).setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        recyclerViewLayout.setLayoutManager(gridLayoutManager);
+                    }
+                });
+                viewHolder.itemView.findViewById(R.id.staggeredgridlayout).setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        recyclerViewLayout.setLayoutManager(staggeredGridLayoutManager);
+                    }
+                });
+            }
         }
     }
 

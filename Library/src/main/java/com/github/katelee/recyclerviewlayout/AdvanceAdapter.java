@@ -19,41 +19,51 @@ abstract public class AdvanceAdapter<VH extends RecyclerView.ViewHolder> extends
     private OnLoadMoreListener mOnLoadMoreListener;
     private static boolean isLoadingMore = false;
     private static boolean enableLoadMore = false;
-    private View mHeaderView;
-    private View mFooterView;
-    private View mLoadMoreView;
 
     @Override
     public RecyclerView.ViewHolder onCreateViewHolder(ViewGroup viewGroup, int viewType) {
+        View view;
         switch (viewType) {
             case TYPE_HEADER:
-                if (mHeaderView != null) {
-                    return new AdvanceHolder(mHeaderView);
-                }
-                return new AdvanceHolder(getDefaultView(viewGroup));
+                view = onHeaderCreateView(viewGroup);
+                return new AdvanceHolder(view != null ? view : getDefaultView(viewGroup));
 
             case TYPE_FOOTER:
-                if (mFooterView != null) {
-                    return new AdvanceHolder(mFooterView);
-                }
-                return new AdvanceHolder(getDefaultView(viewGroup));
+                view = onFooterCreateView(viewGroup);
+                return new AdvanceHolder(view != null ? view : getDefaultView(viewGroup));
 
             case TYPE_LOAD_MORE:
-                if (mLoadMoreView != null) {
-                    return new AdvanceHolder(mLoadMoreView);
-                }
-                return new AdvanceHolder(getDefaultView(viewGroup));
+                view = onLoadMoreCreateView(viewGroup);
+                return new AdvanceHolder(view != null ? view : getDefaultView(viewGroup));
 
             default:
                 return onAdapterCreateViewHolder(viewGroup, viewType);
         }
     }
 
-    private View getDefaultView(ViewGroup viewGroup) {
-        View view = new RelativeLayout(viewGroup.getContext());
+    protected View onLoadMoreCreateView(ViewGroup viewGroup) {
+        return null;
+    }
+
+    protected View onFooterCreateView(ViewGroup viewGroup) {
+        return null;
+    }
+
+    protected View onHeaderCreateView(ViewGroup viewGroup) {
+        return null;
+    }
+
+    private ViewGroup getDefaultView(View v) {
+        ViewGroup viewGroup = new RelativeLayout(v.getContext());
+        viewGroup.setLayoutParams(new ViewGroup.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT,
+                ViewGroup.LayoutParams.WRAP_CONTENT));
+
+        View view = new View(v.getContext());
         view.setLayoutParams(new ViewGroup.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT,
                 ViewGroup.LayoutParams.WRAP_CONTENT));
-        return view;
+        viewGroup.addView(view);
+
+        return viewGroup;
     }
 
     protected abstract VH onAdapterCreateViewHolder(ViewGroup viewGroup, int viewType);
@@ -72,11 +82,7 @@ abstract public class AdvanceAdapter<VH extends RecyclerView.ViewHolder> extends
                 break;
 
             case TYPE_LOAD_MORE:
-                viewHolder.itemView.setVisibility(enableLoadMore ? View.VISIBLE : View.GONE);
-                if (enableLoadMore && mOnLoadMoreListener != null && !isLoadingMore && mLoadMoreView != null) {
-                    mOnLoadMoreListener.loadMore();
-                    isLoadingMore = true;
-                }
+                onLoadMoreBindViewHolder(viewHolder);
                 break;
 
             default:
@@ -99,6 +105,17 @@ abstract public class AdvanceAdapter<VH extends RecyclerView.ViewHolder> extends
 
     protected void onHeaderBindViewHolder(RecyclerView.ViewHolder viewHolder) {
 
+    }
+
+    protected void onLoadMoreBindViewHolder(RecyclerView.ViewHolder viewHolder) {
+        ViewGroup.LayoutParams vlp = viewHolder.itemView.getLayoutParams();
+        vlp.height = enableLoadMore ? ViewGroup.LayoutParams.WRAP_CONTENT : 0;
+        viewHolder.itemView.setLayoutParams(vlp);
+
+        if (enableLoadMore && mOnLoadMoreListener != null && !isLoadingMore) {
+            mOnLoadMoreListener.loadMore();
+            isLoadingMore = true;
+        }
     }
 
     protected abstract void onAdapterBindViewHolder(VH viewHolder, int position);
@@ -200,18 +217,5 @@ abstract public class AdvanceAdapter<VH extends RecyclerView.ViewHolder> extends
 
     int getLoadMorePosition() {
         return getItemCount() - 1;
-    }
-
-    public void setHeaderView(View view) {
-        mHeaderView = view;
-        notifyHeaderViewChanged();
-    }
-    public void setFooterView(View view) {
-        mFooterView = view;
-        notifyFooterViewChanged();
-    }
-    public void setLoadMoreView(View view) {
-        mLoadMoreView = view;
-        notifyLoadMoreViewChanged();
     }
 }

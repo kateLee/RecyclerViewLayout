@@ -7,10 +7,8 @@ import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.AttributeSet;
 import android.view.View;
-import android.view.ViewGroup;
 import android.view.ViewTreeObserver;
 import android.widget.FrameLayout;
-import android.widget.RelativeLayout;
 
 /**
  * Created by Kate on 2015/5/7
@@ -20,9 +18,6 @@ public class RecyclerViewLayout extends SwipeRefreshLayout {
     private RecyclerView mRecyclerView;
     private boolean mHeaderAdjust = false;
     private View mAdjustHeader;
-    private RelativeLayout mHeader;
-    private RelativeLayout mFooter;
-    private RelativeLayout mLoaderMore;
     private Adapter<? extends RecyclerView.ViewHolder> mAdapter;
     private RecyclerViewWithHeaderListener mHeaderListener;
     private RecyclerView.OnScrollListener mScrollListener;
@@ -41,15 +36,6 @@ public class RecyclerViewLayout extends SwipeRefreshLayout {
         mRecyclerView = new RecyclerView(context);
         mRecyclerView.setLayoutParams(new LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.MATCH_PARENT));
         mFrameLayout.addView(mRecyclerView);
-
-        mHeader = new RelativeLayout(context);
-        mHeader.setLayoutParams(new LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.WRAP_CONTENT));
-
-        mFooter = new RelativeLayout(context);
-        mFooter.setLayoutParams(new LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.WRAP_CONTENT));
-
-        mLoaderMore = new RelativeLayout(context);
-        mLoaderMore.setLayoutParams(new LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.WRAP_CONTENT));
 
         initialize();
     }
@@ -149,47 +135,6 @@ public class RecyclerViewLayout extends SwipeRefreshLayout {
         mAdapter.notifyHeaderViewChanged();
     }
 
-//    public void setHeaderView(View view) {
-//        mAdapter.setHeaderView(view);
-//    }
-//
-//    /**
-//     * enable header animate with scroll
-//     */
-//    public void enableHeaderAdjustWithScroll() {
-//        mHeaderAdjust = true;
-//    }
-//
-//    /**
-//     * disable header animate with scroll
-//     */
-//    public void disableHeaderAdjustWithScroll() {
-//        mHeaderAdjust = false;
-//    }
-
-//    public void setFooterView(View view) {
-//        mFooter = view;
-//        mAdapter.notifyFooterViewChanged();
-//    }
-//
-//    public void removeFooterView() {
-//        mFooter = null;
-//        mAdapter.notifyFooterViewChanged();
-//    }
-//
-//    public void setLoaderMoreView(View view) {
-//        mLoaderMore = view;
-//        mAdapter.notifyLoadMoreViewChanged();
-//    }
-//
-//    public void enableLoadMore() {
-//        mAdapter.enableLoadMore();
-//    }
-//
-//    public void disableLoadMore() {
-//        mAdapter.disableLoadMore();
-//    }
-
     public static abstract class Adapter<VH extends RecyclerView.ViewHolder> extends AdvanceAdapter<VH> {
 
         private View adjustHeaderView;
@@ -199,15 +144,12 @@ public class RecyclerViewLayout extends SwipeRefreshLayout {
             super.onHeaderBindViewHolder(viewHolder);
 
             if (adjustHeaderView != null) {
-                ViewGroup.LayoutParams vlp = viewHolder.itemView.getLayoutParams();
-                vlp.height = adjustHeaderView.getHeight();
-                viewHolder.itemView.setLayoutParams(vlp);
+                viewHolder.itemView.setPadding(0, adjustHeaderView.getHeight(), 0, 0);
             }
             else {
-                ViewGroup.LayoutParams vlp = viewHolder.itemView.getLayoutParams();
-                vlp.height = 0;
-                viewHolder.itemView.setLayoutParams(vlp);
+                viewHolder.itemView.setPadding(0, 0, 0, 0);
             }
+
         }
 
         private void setAdjustHeaderView(View view) {
@@ -236,7 +178,6 @@ public class RecyclerViewLayout extends SwipeRefreshLayout {
             public void onGlobalLayout() {
                 onGlobalLayout(view);
             }
-
         }
     }
 }
