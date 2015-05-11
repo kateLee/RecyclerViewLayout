@@ -1,4 +1,7 @@
 <resources>
     <string name="app_name">RecyclerViewLayout</string>
     <string name="option_switch_mode">option_switch_mode</string>
+    <string name="staggeredgridlayout">staggeredgridlayout</string>
+    <string name="gridlayout">gridlayout</string>
+    <string name="linearlayout">linearlayout</string>
 </resources>

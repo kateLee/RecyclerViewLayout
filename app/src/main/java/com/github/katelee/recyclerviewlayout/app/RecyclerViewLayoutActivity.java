@@ -4,10 +4,7 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.app.ActionBarActivity;
-import android.support.v7.widget.LinearLayoutManager;
-import android.support.v7.widget.RecyclerView;
-import android.support.v7.widget.StaggeredGridLayoutManager;
-import android.support.v7.widget.Toolbar;
+import android.support.v7.widget.*;
 import android.view.*;
 import android.widget.TextView;
 import com.github.katelee.recyclerviewlayout.RecyclerViewLayout;
@@ -23,12 +20,13 @@ public class RecyclerViewLayoutActivity extends ActionBarActivity {
     RecyclerViewLayout recyclerViewLayout;
 
     LinearLayoutManager linearLayoutManager;
-    StaggeredGridLayoutManager staggeredGridLayoutManager =
-            new StaggeredGridLayoutManager(2, StaggeredGridLayoutManager.VERTICAL);
+    StaggeredGridLayoutManager staggeredGridLayoutManager;
+    GridLayoutManager gridLayoutManager;
     DataAdapter mAdapter;
+    View header;
 
     List<String> strings = new ArrayList<String>();
-    android.os.Handler handler = new Handler();
+    Handler handler = new Handler();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -43,11 +41,16 @@ public class RecyclerViewLayoutActivity extends ActionBarActivity {
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         getSupportActionBar().setHomeButtonEnabled(true);
 
+        linearLayoutManager = new LinearLayoutManager(this);
+        staggeredGridLayoutManager = new StaggeredGridLayoutManager(2, StaggeredGridLayoutManager.VERTICAL);
+        gridLayoutManager = new GridLayoutManager(this, 2);
+
         strings.add("0");
         strings.add("1");
         strings.add("2");
         strings.add("3");
         strings.add("4");
+        strings.add("5");
 
         recyclerViewLayout.setLayoutManager(linearLayoutManager = new LinearLayoutManager(this));
         recyclerViewLayout.setAdapter(mAdapter = new DataAdapter());
@@ -68,6 +71,7 @@ public class RecyclerViewLayoutActivity extends ActionBarActivity {
                         tmp.add("2");
                         tmp.add("3");
                         tmp.add("4");
+                        tmp.add("5");
 
                         strings.addAll(tmp);
                         mAdapter.notifyDataSetChanged();
@@ -86,47 +90,45 @@ public class RecyclerViewLayoutActivity extends ActionBarActivity {
                     @Override
                     public void run() {
                         List<String> tmp = new ArrayList<String>();
-                        tmp.add("5");
                         tmp.add("6");
                         tmp.add("7");
                         tmp.add("8");
+                        tmp.add("9");
+                        tmp.add("10");
 
                         strings.addAll(tmp);
-                        mAdapter.notifyItemRangeInserted(strings.size() - tmp.size(), tmp.size());
+                        mAdapter.notifyAdapterItemRangeInserted(strings.size() - tmp.size(), tmp.size());
+                        mAdapter.setLoadingMore(false);
 
-                        recyclerViewLayout.disableLoadMore();
+                        mAdapter.disableLoadMore();
                     }
                 }, 100);
             }
         });
         mAdapter.setLoadMoreView(LayoutInflater.from(this).inflate(R.layout.view_loadmore, null));
-        mAdapter.setHeaderView(LayoutInflater.from(this).inflate(R.layout.view_header, null));
+//        mAdapter.setHeaderView(header = LayoutInflater.from(this).inflate(R.layout.view_header, null));
         mAdapter.setFooterView(LayoutInflater.from(this).inflate(R.layout.view_footer, null));
-//        recyclerViewLayout.setAdjustHeaderView(LayoutInflater.from(this).inflate(R.layout.view_header, null));
-    }
+        recyclerViewLayout.setAdjustHeaderView(header = LayoutInflater.from(this).inflate(R.layout.view_header, null));
+        mAdapter.enableLoadMore();
 
-    @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-        getMenuInflater().inflate(R.menu.switch_mode, menu);
-
-        return super.onCreateOptionsMenu(menu);
-    }
-
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        switch (item.getItemId()) {
-            case R.id.option_switch_mode:
-                if (recyclerViewLayout.getLayoutManager() instanceof LinearLayoutManager) {
-                    recyclerViewLayout.setLayoutManager(staggeredGridLayoutManager);
-                }
-                else {
-                    recyclerViewLayout.setLayoutManager(linearLayoutManager);
-                }
-                return true;
-
-            default:
-                return super.onOptionsItemSelected(item);
-        }
+        header.findViewById(R.id.linearlayout).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                recyclerViewLayout.setLayoutManager(linearLayoutManager);
+            }
+        });
+        header.findViewById(R.id.gridlayout).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                recyclerViewLayout.setLayoutManager(gridLayoutManager);
+            }
+        });
+        header.findViewById(R.id.staggeredgridlayout).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                recyclerViewLayout.setLayoutManager(staggeredGridLayoutManager);
+            }
+        });
     }
 
     private class DataAdapter extends RecyclerViewLayout.Adapter<DataHolder> {
@@ -140,7 +142,7 @@ public class RecyclerViewLayoutActivity extends ActionBarActivity {
         protected void onAdapterBindViewHolder(DataHolder viewHolder, int position) {
             viewHolder.label.setText("position: " + strings.get(position));
             ViewGroup.LayoutParams layoutParams = viewHolder.itemView.getLayoutParams();
-            layoutParams.height = position * 100;
+            layoutParams.height = (position + 1) * 50;
             viewHolder.itemView.setLayoutParams(layoutParams);
         }
 

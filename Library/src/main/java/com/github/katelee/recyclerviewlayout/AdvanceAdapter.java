@@ -4,6 +4,7 @@ import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.StaggeredGridLayoutManager;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.RelativeLayout;
 
 /**
  * Created by Kate on 2015/4/30
@@ -27,25 +28,32 @@ abstract public class AdvanceAdapter<VH extends RecyclerView.ViewHolder> extends
         switch (viewType) {
             case TYPE_HEADER:
                 if (mHeaderView != null) {
-                    return new HeaderHolder(mHeaderView);
+                    return new AdvanceHolder(mHeaderView);
                 }
-                return new HeaderHolder(new View(viewGroup.getContext()));
+                return new AdvanceHolder(getDefaultView(viewGroup));
 
             case TYPE_FOOTER:
                 if (mFooterView != null) {
-                    return new FooterHolder(mFooterView);
+                    return new AdvanceHolder(mFooterView);
                 }
-                return new FooterHolder(new View(viewGroup.getContext()));
+                return new AdvanceHolder(getDefaultView(viewGroup));
 
             case TYPE_LOAD_MORE:
                 if (mLoadMoreView != null) {
-                    return new LoadMoreViewHolder(mLoadMoreView);
+                    return new AdvanceHolder(mLoadMoreView);
                 }
-                return new LoadMoreViewHolder(new View(viewGroup.getContext()));
+                return new AdvanceHolder(getDefaultView(viewGroup));
 
             default:
                 return onAdapterCreateViewHolder(viewGroup, viewType);
         }
+    }
+
+    private View getDefaultView(ViewGroup viewGroup) {
+        View view = new RelativeLayout(viewGroup.getContext());
+        view.setLayoutParams(new ViewGroup.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT,
+                ViewGroup.LayoutParams.WRAP_CONTENT));
+        return view;
     }
 
     protected abstract VH onAdapterCreateViewHolder(ViewGroup viewGroup, int viewType);
@@ -65,9 +73,9 @@ abstract public class AdvanceAdapter<VH extends RecyclerView.ViewHolder> extends
 
             case TYPE_LOAD_MORE:
                 viewHolder.itemView.setVisibility(enableLoadMore ? View.VISIBLE : View.GONE);
-                if (mOnLoadMoreListener != null && !isLoadingMore && mLoadMoreView != null) {
+                if (enableLoadMore && mOnLoadMoreListener != null && !isLoadingMore && mLoadMoreView != null) {
                     mOnLoadMoreListener.loadMore();
-                    setLoadingMore(true);
+                    isLoadingMore = true;
                 }
                 break;
 
@@ -76,7 +84,7 @@ abstract public class AdvanceAdapter<VH extends RecyclerView.ViewHolder> extends
                 break;
         }
 
-        if (viewType == TYPE_HEADER || viewType == TYPE_FOOTER) {
+        if (isFullSpan(position)) {
             if (viewHolder.itemView.getLayoutParams() instanceof StaggeredGridLayoutManager.LayoutParams) {
                 StaggeredGridLayoutManager.LayoutParams layoutParams =
                         (StaggeredGridLayoutManager.LayoutParams) viewHolder.itemView.getLayoutParams();
@@ -133,17 +141,11 @@ abstract public class AdvanceAdapter<VH extends RecyclerView.ViewHolder> extends
     }
 
     public void disableLoadMore() {
-        if (!enableLoadMore) {
-            return;
-        }
         enableLoadMore = false;
         notifyLoadMoreViewChanged();
     }
 
     public void enableLoadMore() {
-        if (enableLoadMore) {
-            return;
-        }
         enableLoadMore = true;
         notifyLoadMoreViewChanged();
     }
@@ -152,23 +154,13 @@ abstract public class AdvanceAdapter<VH extends RecyclerView.ViewHolder> extends
         return position == getHeaderPosition() || position == getFooterPosition() || position == getLoadMorePosition();
     }
 
-    public class HeaderHolder extends RecyclerView.ViewHolder {
-
-        public HeaderHolder(View itemView) {
-            super(itemView);
-        }
+    public void notifyAdapterItemRangeInserted(int position, int size) {
+        notifyItemRangeInserted(getHeaderCount() + position, size);
     }
 
-    public class FooterHolder extends RecyclerView.ViewHolder {
+    public class AdvanceHolder extends RecyclerView.ViewHolder {
 
-        public FooterHolder(View itemView) {
-            super(itemView);
-        }
-    }
-
-    public class LoadMoreViewHolder extends RecyclerView.ViewHolder {
-
-        public LoadMoreViewHolder(View itemView) {
+        public AdvanceHolder(View itemView) {
             super(itemView);
         }
     }
@@ -195,6 +187,7 @@ abstract public class AdvanceAdapter<VH extends RecyclerView.ViewHolder> extends
 
     public void setLoadingMore(boolean flag) {
         isLoadingMore = flag;
+        notifyLoadMoreViewChanged();
     }
 
     int getHeaderPosition() {

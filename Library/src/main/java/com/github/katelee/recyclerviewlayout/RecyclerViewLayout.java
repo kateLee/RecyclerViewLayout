@@ -7,6 +7,8 @@ import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.AttributeSet;
 import android.view.View;
+import android.view.ViewGroup;
+import android.view.ViewTreeObserver;
 import android.widget.FrameLayout;
 import android.widget.RelativeLayout;
 
@@ -19,9 +21,9 @@ public class RecyclerViewLayout extends SwipeRefreshLayout {
     private boolean mHeaderAdjust = false;
     private View mAdjustHeader;
     private RelativeLayout mHeader;
-    private View mFooter;
-    private View mLoaderMore;
-    private Adapter<? extends RecyclerView.ViewHolder> mAdvanceAdapter;
+    private RelativeLayout mFooter;
+    private RelativeLayout mLoaderMore;
+    private Adapter<? extends RecyclerView.ViewHolder> mAdapter;
     private RecyclerViewWithHeaderListener mHeaderListener;
     private RecyclerView.OnScrollListener mScrollListener;
 
@@ -43,6 +45,12 @@ public class RecyclerViewLayout extends SwipeRefreshLayout {
         mHeader = new RelativeLayout(context);
         mHeader.setLayoutParams(new LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.WRAP_CONTENT));
 
+        mFooter = new RelativeLayout(context);
+        mFooter.setLayoutParams(new LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.WRAP_CONTENT));
+
+        mLoaderMore = new RelativeLayout(context);
+        mLoaderMore.setLayoutParams(new LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.WRAP_CONTENT));
+
         initialize();
     }
 
@@ -53,47 +61,6 @@ public class RecyclerViewLayout extends SwipeRefreshLayout {
                 return mAdjustHeader;
             }
         };
-//        mRecyclerView.setAdapter(mAdvanceAdapter = new AdvanceAdapter<RecyclerView.ViewHolder>() {
-//            @Override
-//            protected RecyclerView.ViewHolder onAdapterCreateViewHolder(ViewGroup viewGroup, int viewType) {
-//                if (mAdapter != null) {
-//                    return mAdapter.onCreateViewHolder(viewGroup, viewType);
-//                }
-//                return null;
-//            }
-//
-//            @Override
-//            protected void onHeaderBindViewHolder(RecyclerView.ViewHolder viewHolder) {
-//                super.onHeaderBindViewHolder(viewHolder);
-//
-//                if (mAdjustHeader != null) {
-//                    viewHolder.itemView.setPadding(0, mAdjustHeader.getHeight(), 0, 0);
-//                }
-//                else {
-//                    viewHolder.itemView.setPadding(0, 0, 0, 0);
-//                }
-//            }
-//
-//            @Override
-//            protected void onAdapterBindViewHolder(RecyclerView.ViewHolder viewHolder, int position) {
-//                if (mAdapter != null) {
-//                    mAdapter.onBindViewHolder(viewHolder, position);
-//                }
-//            }
-//
-//            @Override
-//            protected int getAdapterItemViewType(int position) {
-//                if (mAdapter != null) {
-//                    return mAdapter.getItemViewType(position);
-//                }
-//                return 0;
-//            }
-//
-//            @Override
-//            public int getAdapterItemCount() {
-//                return mAdapter.getItemCount();
-//            }
-//        });
         mRecyclerView.setOnScrollListener(new RecyclerView.OnScrollListener() {
             @Override
             public void onScrollStateChanged(RecyclerView recyclerView, int newState) {
@@ -138,8 +105,8 @@ public class RecyclerViewLayout extends SwipeRefreshLayout {
     }
 
     public void setAdapter(Adapter<? extends RecyclerView.ViewHolder> adapter) {
-        mAdvanceAdapter  = adapter;
-        mRecyclerView.setAdapter(mAdvanceAdapter);
+        mAdapter = adapter;
+        mRecyclerView.setAdapter(mAdapter);
     }
 
     public void setLayoutManager(RecyclerView.LayoutManager layout) {
@@ -150,7 +117,7 @@ public class RecyclerViewLayout extends SwipeRefreshLayout {
             ((GridLayoutManager) layout).setSpanSizeLookup(new GridLayoutManager.SpanSizeLookup() {
                 @Override
                 public int getSpanSize(int position) {
-                    return mAdvanceAdapter.isFullSpan(position) ? gridLayoutManager.getSpanCount() : 1;
+                    return mAdapter.isFullSpan(position) ? gridLayoutManager.getSpanCount() : 1;
                 }
             });
         }
@@ -165,11 +132,10 @@ public class RecyclerViewLayout extends SwipeRefreshLayout {
         if (mAdjustHeader != null) {
             mFrameLayout.removeView(mAdjustHeader);
         }
-        mFrameLayout.addView(view);
+        mFrameLayout.addView(view, new FrameLayout.LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.WRAP_CONTENT));
 
         mAdjustHeader = view;
-        mAdvanceAdapter.setAdjustHeaderView(mAdjustHeader);
-        mAdvanceAdapter.notifyHeaderViewChanged();
+        mAdapter.setAdjustHeaderView(view);
     }
 
     public void removeAdjustHeaderView() {
@@ -179,15 +145,14 @@ public class RecyclerViewLayout extends SwipeRefreshLayout {
         }
 
         mAdjustHeader = null;
-        mAdvanceAdapter.setAdjustHeaderView(mAdjustHeader);
-        mAdvanceAdapter.notifyHeaderViewChanged();
+        mAdapter.setAdjustHeaderView(null);
+        mAdapter.notifyHeaderViewChanged();
     }
 
-    public void setHeaderView(View view) {
-        mHeader.removeAllViews();
-        mAdvanceAdapter.setHeaderView(mHeader);
-    }
-
+//    public void setHeaderView(View view) {
+//        mAdapter.setHeaderView(view);
+//    }
+//
 //    /**
 //     * enable header animate with scroll
 //     */
@@ -204,26 +169,26 @@ public class RecyclerViewLayout extends SwipeRefreshLayout {
 
 //    public void setFooterView(View view) {
 //        mFooter = view;
-//        mAdvanceAdapter.notifyFooterViewChanged();
+//        mAdapter.notifyFooterViewChanged();
 //    }
 //
 //    public void removeFooterView() {
 //        mFooter = null;
-//        mAdvanceAdapter.notifyFooterViewChanged();
+//        mAdapter.notifyFooterViewChanged();
 //    }
 //
 //    public void setLoaderMoreView(View view) {
 //        mLoaderMore = view;
-//        mAdvanceAdapter.notifyLoadMoreViewChanged();
+//        mAdapter.notifyLoadMoreViewChanged();
 //    }
 //
-    public void enableLoadMore() {
-        mAdvanceAdapter.enableLoadMore();
-    }
-
-    public void disableLoadMore() {
-        mAdvanceAdapter.disableLoadMore();
-    }
+//    public void enableLoadMore() {
+//        mAdapter.enableLoadMore();
+//    }
+//
+//    public void disableLoadMore() {
+//        mAdapter.disableLoadMore();
+//    }
 
     public static abstract class Adapter<VH extends RecyclerView.ViewHolder> extends AdvanceAdapter<VH> {
 
@@ -234,16 +199,44 @@ public class RecyclerViewLayout extends SwipeRefreshLayout {
             super.onHeaderBindViewHolder(viewHolder);
 
             if (adjustHeaderView != null) {
-                viewHolder.itemView.setPadding(0, adjustHeaderView.getHeight(), 0, 0);
+                ViewGroup.LayoutParams vlp = viewHolder.itemView.getLayoutParams();
+                vlp.height = adjustHeaderView.getHeight();
+                viewHolder.itemView.setLayoutParams(vlp);
             }
             else {
-                viewHolder.itemView.setPadding(0, 0, 0, 0);
+                ViewGroup.LayoutParams vlp = viewHolder.itemView.getLayoutParams();
+                vlp.height = 0;
+                viewHolder.itemView.setLayoutParams(vlp);
             }
         }
 
         private void setAdjustHeaderView(View view) {
-
             this.adjustHeaderView = view;
+
+            adjustHeaderView.getViewTreeObserver().addOnGlobalLayoutListener(new OnItemGlobalLayoutListener(adjustHeaderView) {
+                @Override
+                public void onGlobalLayout(View view) {
+                    // make sure it is not called anymore
+                    view.getViewTreeObserver().removeGlobalOnLayoutListener(this);
+                    notifyHeaderViewChanged();
+                }
+            });
+        }
+
+        private abstract class OnItemGlobalLayoutListener implements ViewTreeObserver.OnGlobalLayoutListener {
+            private View view;
+
+            protected OnItemGlobalLayoutListener(View view) {
+                this.view = view;
+            }
+
+            abstract public void onGlobalLayout(View view);
+
+            @Override
+            public void onGlobalLayout() {
+                onGlobalLayout(view);
+            }
+
         }
     }
 }
