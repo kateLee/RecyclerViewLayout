@@ -1,0 +1,75 @@
+apply plugin: 'com.jfrog.bintray'
+apply plugin: 'com.github.dcendents.android-maven'
+
+def siteUrl = "https://github.com/kateLee/RecyclerViewLayout"
+def gitUrl = "https://github.com/kateLee/RecyclerViewLayout.git"
+
+group = "com.github.katelee.widget"
+version = "1.0.0"
+
+install {
+    repositories.mavenInstaller {
+        pom {
+            project {
+                packaging 'aar'
+
+                name 'The Android widget within a RecyclerView can pull to refresh and load more. '
+                url siteUrl
+
+                licenses {
+                    license {
+                        name 'The MIT License'
+                        url 'https://raw.githubusercontent.com/kateLee/RecyclerViewLayout/master/LICENSE'
+                    }
+                }
+                developers {
+                    developer {
+                        id DeveloperUserId
+                        name DeveloperUserName
+                        email DeveloperUserEmail
+                    }
+                }
+
+                scm {
+                    connection gitUrl
+                    developerConnection gitUrl
+                    url siteUrl
+                }
+            }
+        }
+    }
+}
+
+task sourcesJar(type: Jar) {
+    from android.sourceSets.main.java.srcDirs
+    classifier = 'sources'
+}
+
+task javadoc(type: Javadoc) {
+    source = android.sourceSets.main.java.srcDirs
+    classpath += project.files(android.getBootClasspath().join(File.pathSeparator))
+}
+
+task javadocJar(type: Jar, dependsOn: javadoc) {
+    classifier = 'javadoc'
+    from javadoc.destinationDir
+}
+
+artifacts {
+    archives javadocJar
+    archives sourcesJar
+}
+
+bintray {
+    user = BintrayUser
+    key = BintrayApikey
+    configurations = ['archives']
+    pkg {
+        repo = "maven"
+        name = "RecyclerViewLayout"
+        websiteUrl = siteUrl
+        vcsUrl = gitUrl
+        licenses = ["MIT"]
+        publish = true
+    }
+}
