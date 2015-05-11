@@ -1,4 +1,4 @@
-package com.github.katelee.recyclerviewlayout;
+package com.github.katelee.widget;
 
 import android.content.Context;
 import android.support.v4.view.ViewCompat;
@@ -9,6 +9,8 @@ import android.util.AttributeSet;
 import android.view.View;
 import android.view.ViewTreeObserver;
 import android.widget.FrameLayout;
+import com.github.katelee.widget.recyclerviewlayout.AdvanceAdapter;
+import com.github.katelee.widget.recyclerviewlayout.RecyclerViewWithHeaderListener;
 
 /**
  * Created by Kate on 2015/5/7
@@ -43,7 +45,7 @@ public class RecyclerViewLayout extends SwipeRefreshLayout {
     private void initialize() {
         mHeaderListener = new RecyclerViewWithHeaderListener(mRecyclerView) {
             @Override
-            View getHeaderView() {
+            public View getHeaderView() {
                 return mAdjustHeader;
             }
         };
@@ -149,20 +151,20 @@ public class RecyclerViewLayout extends SwipeRefreshLayout {
             else {
                 viewHolder.itemView.setPadding(0, 0, 0, 0);
             }
-
         }
 
         private void setAdjustHeaderView(View view) {
             this.adjustHeaderView = view;
 
-            adjustHeaderView.getViewTreeObserver().addOnGlobalLayoutListener(new OnItemGlobalLayoutListener(adjustHeaderView) {
-                @Override
-                public void onGlobalLayout(View view) {
-                    // make sure it is not called anymore
-                    view.getViewTreeObserver().removeGlobalOnLayoutListener(this);
-                    notifyHeaderViewChanged();
-                }
-            });
+            adjustHeaderView.getViewTreeObserver().addOnGlobalLayoutListener(
+                    new OnItemGlobalLayoutListener(adjustHeaderView) {
+                        @Override
+                        public void onGlobalLayout(View view) {
+                            // make sure it is not called anymore
+                            view.getViewTreeObserver().removeGlobalOnLayoutListener(this);
+                            notifyHeaderViewChanged();
+                        }
+                    });
         }
 
         private abstract class OnItemGlobalLayoutListener implements ViewTreeObserver.OnGlobalLayoutListener {

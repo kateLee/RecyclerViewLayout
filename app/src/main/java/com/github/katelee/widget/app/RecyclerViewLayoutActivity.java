@@ -1,4 +1,4 @@
-package com.github.katelee.recyclerviewlayout.app;
+package com.github.katelee.widget.app;
 
 import android.os.Bundle;
 import android.os.Handler;
@@ -7,7 +7,7 @@ import android.support.v7.app.ActionBarActivity;
 import android.support.v7.widget.*;
 import android.view.*;
 import android.widget.TextView;
-import com.github.katelee.recyclerviewlayout.RecyclerViewLayout;
+import com.github.katelee.widget.RecyclerViewLayout;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -16,7 +16,6 @@ import java.util.List;
  * Created by Kate on 2015/5/8
  */
 public class RecyclerViewLayoutActivity extends ActionBarActivity {
-    Toolbar toolbar;
     RecyclerViewLayout recyclerViewLayout;
 
     LinearLayoutManager linearLayoutManager;
@@ -35,12 +34,7 @@ public class RecyclerViewLayoutActivity extends ActionBarActivity {
 
         setContentView(R.layout.activity_recycler_view_layout);
 
-        toolbar = (Toolbar) findViewById(R.id.toolbar);
         recyclerViewLayout = (RecyclerViewLayout) findViewById(R.id.recyclerViewLayout);
-
-        setSupportActionBar(toolbar);
-        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-        getSupportActionBar().setHomeButtonEnabled(true);
 
         linearLayoutManager = new LinearLayoutManager(this);
         staggeredGridLayoutManager = new StaggeredGridLayoutManager(2, StaggeredGridLayoutManager.VERTICAL);
@@ -53,7 +47,7 @@ public class RecyclerViewLayoutActivity extends ActionBarActivity {
         strings.add("4");
         strings.add("5");
 
-        recyclerViewLayout.setLayoutManager(linearLayoutManager = new LinearLayoutManager(this));
+        recyclerViewLayout.setLayoutManager(linearLayoutManager);
         recyclerViewLayout.setAdapter(mAdapter = new DataAdapter());
 
         recyclerViewLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
@@ -134,6 +128,14 @@ public class RecyclerViewLayoutActivity extends ActionBarActivity {
 
     private class DataAdapter extends RecyclerViewLayout.Adapter<DataHolder> {
         @Override
+        protected View onHeaderCreateView(ViewGroup viewGroup) {
+            if (!isAdjustHeader) {
+                return LayoutInflater.from(viewGroup.getContext()).inflate(R.layout.view_header, viewGroup, false);
+            }
+            return super.onHeaderCreateView(viewGroup);
+        }
+
+        @Override
         protected View onLoadMoreCreateView(ViewGroup viewGroup) {
             return LayoutInflater.from(viewGroup.getContext()).inflate(R.layout.view_loadmore, viewGroup, false);
         }
@@ -141,14 +143,6 @@ public class RecyclerViewLayoutActivity extends ActionBarActivity {
         @Override
         protected View onFooterCreateView(ViewGroup viewGroup) {
             return LayoutInflater.from(viewGroup.getContext()).inflate(R.layout.view_footer, viewGroup, false);
-        }
-
-        @Override
-        protected View onHeaderCreateView(ViewGroup viewGroup) {
-            if (!isAdjustHeader) {
-                return LayoutInflater.from(viewGroup.getContext()).inflate(R.layout.view_header, viewGroup, false);
-            }
-            return super.onHeaderCreateView(viewGroup);
         }
 
         @Override
@@ -161,7 +155,7 @@ public class RecyclerViewLayoutActivity extends ActionBarActivity {
         protected void onAdapterBindViewHolder(DataHolder viewHolder, int position) {
             viewHolder.label.setText("position: " + strings.get(position));
             ViewGroup.LayoutParams layoutParams = viewHolder.itemView.getLayoutParams();
-            layoutParams.height = 150 + (position + 1) * 10;
+            layoutParams.height = 150 + (position + 1) * 20;
             viewHolder.itemView.setLayoutParams(layoutParams);
         }
 

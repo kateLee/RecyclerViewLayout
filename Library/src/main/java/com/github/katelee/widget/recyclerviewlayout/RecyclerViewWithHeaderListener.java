@@ -1,4 +1,4 @@
-package com.github.katelee.recyclerviewlayout;
+package com.github.katelee.widget.recyclerviewlayout;
 
 import android.os.Handler;
 import android.support.v7.widget.LinearLayoutManager;
@@ -19,7 +19,7 @@ public abstract class RecyclerViewWithHeaderListener extends RecyclerView.OnScro
         mOnStopRunnable = new OnStopRunnable(recyclerView);
     }
 
-    abstract View getHeaderView();
+    protected abstract View getHeaderView();
 
     private void hideAnimate(int height) {
         if (getHeaderView() == null) {

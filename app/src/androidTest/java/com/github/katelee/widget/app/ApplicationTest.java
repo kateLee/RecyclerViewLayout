@@ -1,4 +1,4 @@
-package com.github.katelee.recyclerviewlayout.app;
+package com.github.katelee.widget.app;
 
 import android.app.Application;
 import android.test.ApplicationTestCase;

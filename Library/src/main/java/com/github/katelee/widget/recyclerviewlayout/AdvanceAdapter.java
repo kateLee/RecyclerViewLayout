@@ -1,10 +1,10 @@
-package com.github.katelee.recyclerviewlayout;
+package com.github.katelee.widget.recyclerviewlayout;
 
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.StaggeredGridLayoutManager;
+import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.RelativeLayout;
 
 /**
  * Created by Kate on 2015/4/30
@@ -25,8 +25,12 @@ abstract public class AdvanceAdapter<VH extends RecyclerView.ViewHolder> extends
         View view;
         switch (viewType) {
             case TYPE_HEADER:
-                view = onHeaderCreateView(viewGroup);
-                return new AdvanceHolder(view != null ? view : getDefaultView(viewGroup));
+                DefaultViewHolder header = new DefaultViewHolder(getDefaultView(viewGroup));
+                view = onHeaderCreateView(header.rootView);
+                if (view != null) {
+                    header.addView(view);
+                }
+                return new AdvanceHolder(header.itemView);
 
             case TYPE_FOOTER:
                 view = onFooterCreateView(viewGroup);
@@ -53,17 +57,24 @@ abstract public class AdvanceAdapter<VH extends RecyclerView.ViewHolder> extends
         return null;
     }
 
-    private ViewGroup getDefaultView(View v) {
-        ViewGroup viewGroup = new RelativeLayout(v.getContext());
-        viewGroup.setLayoutParams(new ViewGroup.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT,
-                ViewGroup.LayoutParams.WRAP_CONTENT));
+    private class DefaultViewHolder extends RecyclerView.ViewHolder {
 
-        View view = new View(v.getContext());
-        view.setLayoutParams(new ViewGroup.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT,
-                ViewGroup.LayoutParams.WRAP_CONTENT));
-        viewGroup.addView(view);
+        private final ViewGroup rootView;
 
-        return viewGroup;
+        public DefaultViewHolder(View itemView) {
+            super(itemView);
+
+            rootView = (ViewGroup) itemView.findViewById(R.id.recyclerviewlayout_default);
+        }
+
+        public void addView(View view) {
+            rootView.addView(view);
+        }
+    }
+
+    private View getDefaultView(ViewGroup viewGroup) {
+        return LayoutInflater.from(viewGroup.getContext()).inflate(R.layout.view_recyclerviewlayout_default,
+                viewGroup, false);
     }
 
     protected abstract VH onAdapterCreateViewHolder(ViewGroup viewGroup, int viewType);
@@ -71,6 +82,7 @@ abstract public class AdvanceAdapter<VH extends RecyclerView.ViewHolder> extends
     @SuppressWarnings("unchecked viewHolder type")
     @Override
     public void onBindViewHolder(RecyclerView.ViewHolder viewHolder, int position) {
+
         int viewType = getItemViewType(position);
         switch (viewType) {
             case TYPE_HEADER:
@@ -90,12 +102,10 @@ abstract public class AdvanceAdapter<VH extends RecyclerView.ViewHolder> extends
                 break;
         }
 
-        if (isFullSpan(position)) {
-            if (viewHolder.itemView.getLayoutParams() instanceof StaggeredGridLayoutManager.LayoutParams) {
-                StaggeredGridLayoutManager.LayoutParams layoutParams =
-                        (StaggeredGridLayoutManager.LayoutParams) viewHolder.itemView.getLayoutParams();
-                layoutParams.setFullSpan(true);
-            }
+        if (viewHolder.itemView.getLayoutParams() instanceof StaggeredGridLayoutManager.LayoutParams) {
+            StaggeredGridLayoutManager.LayoutParams layoutParams =
+                    (StaggeredGridLayoutManager.LayoutParams) viewHolder.itemView.getLayoutParams();
+            layoutParams.setFullSpan(isFullSpan(position));
         }
     }
 
