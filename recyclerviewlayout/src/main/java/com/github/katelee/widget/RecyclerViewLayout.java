@@ -137,6 +137,10 @@ public class RecyclerViewLayout extends SwipeRefreshLayout {
         mAdapter.notifyHeaderViewChanged();
     }
 
+    public View getAdjustHeaderView() {
+        return mAdjustHeader;
+    }
+
     public static abstract class Adapter<VH extends RecyclerView.ViewHolder> extends AdvanceAdapter<VH> {
 
         private View adjustHeaderView;

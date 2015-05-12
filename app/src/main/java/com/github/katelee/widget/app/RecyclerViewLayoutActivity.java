@@ -93,7 +93,8 @@ public class RecyclerViewLayoutActivity extends ActionBarActivity {
                         tmp.add("11");
 
                         strings.addAll(tmp);
-                        mAdapter.notifyAdapterItemRangeInserted(strings.size() - tmp.size(), tmp.size());
+                        mAdapter.notifyAdapterItemRangeInserted(mAdapter.getAdapterItemCount() - tmp.size(), 
+                        tmp.size());
                         mAdapter.setLoadingMore(false);
 
                         mAdapter.disableLoadMore();

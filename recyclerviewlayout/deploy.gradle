@@ -5,15 +5,14 @@ def siteUrl = "https://github.com/kateLee/RecyclerViewLayout"
 def gitUrl = "https://github.com/kateLee/RecyclerViewLayout.git"
 
 group = "com.github.katelee.widget"
-version = "1.0.0"
+version = "0.9.0"
 
 install {
     repositories.mavenInstaller {
         pom {
             project {
                 packaging 'aar'
-
-                name 'The Android widget within a RecyclerView can pull to refresh and load more. '
+                name 'The Android widget within a RecyclerView can pull to refresh and load more.'
                 url siteUrl
 
                 licenses {

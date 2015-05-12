@@ -1,14 +1,14 @@
 RecyclerViewLayout
 ===================================  
 
-Version 0.1.0
+[ ![Download](https://api.bintray.com/packages/katelee/maven/RecyclerViewLayout/images/download.svg) ](https://bintray.com/katelee/maven/RecyclerViewLayout/_latestVersion)
 
 Developing Project
 
 ## Table of Contents
 * [English info](#english-info)
-
 * [中文介紹](#chinese-info)
+* [Usage](#usage)
 
 ### English info
 Base on android.support.v7.RecyclerView
@@ -24,3 +24,20 @@ Base on android.support.v7.RecyclerView
 1. 支援下拉更新和載入更多。
 2. 支援頁首和頁腳項目。
 3. 支援在使用者滑動時，頁首的顯示和隱藏。
+
+### Usage
+```
+buildscript {
+    repositories {
+        jcenter()
+    }
+}
+
+repositories {
+    jcenter()
+}
+
+dependencies {
+    compile 'com.github.katelee.widget:recyclerviewlayout:0.9.0'
+}
+```

@@ -40,5 +40,6 @@ dependencies {
     compile fileTree(dir: 'libs', include: ['*.jar'])
     compile 'com.android.support:appcompat-v7:22.0.0'
 
-    compile project(':Library')
+    compile project(':recyclerviewlayout')
+//    compile 'com.github.katelee.widget:recyclerviewlayout:0.9.0'
 }

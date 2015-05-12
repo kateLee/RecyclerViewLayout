@@ -167,11 +167,17 @@ abstract public class AdvanceAdapter<VH extends RecyclerView.ViewHolder> extends
         return 2;
     }
 
+    /**
+     * cause it will invalid view, do not use this method in bindView
+     */
     public void disableLoadMore() {
         enableLoadMore = false;
         notifyLoadMoreViewChanged();
     }
 
+    /**
+     * cause it will invalid view, do not use this method in bindView
+     */
     public void enableLoadMore() {
         enableLoadMore = true;
         notifyLoadMoreViewChanged();
@@ -183,6 +189,14 @@ abstract public class AdvanceAdapter<VH extends RecyclerView.ViewHolder> extends
 
     public void notifyAdapterItemRangeInserted(int position, int size) {
         notifyItemRangeInserted(getHeaderCount() + position, size);
+    }
+
+    public void notifyAdapterItemRangeRemoved(int position, int size) {
+        notifyItemRangeRemoved(getHeaderCount() + position, size);
+    }
+
+    public void notifyAdapterItemRangeChanged(int position, int size) {
+        notifyItemRangeChanged(getHeaderCount() + position, size);
     }
 
     public class AdvanceHolder extends RecyclerView.ViewHolder {
@@ -212,6 +226,10 @@ abstract public class AdvanceAdapter<VH extends RecyclerView.ViewHolder> extends
         void loadMore();
     }
 
+    /**
+     * cause it will invalid view, do not use this method in bindView
+     * @param flag
+     */
     public void setLoadingMore(boolean flag) {
         isLoadingMore = flag;
         notifyLoadMoreViewChanged();
