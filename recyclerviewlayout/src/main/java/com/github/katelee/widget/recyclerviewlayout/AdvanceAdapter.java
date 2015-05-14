@@ -199,10 +199,21 @@ abstract public class AdvanceAdapter<VH extends RecyclerView.ViewHolder> extends
         notifyItemRangeChanged(getHeaderCount() + position, size);
     }
 
-    public class AdvanceHolder extends RecyclerView.ViewHolder {
+    public static class AdvanceHolder extends RecyclerView.ViewHolder {
+        View hold_view;
 
         public AdvanceHolder(View itemView) {
             super(itemView);
+
+            hold_view = itemView.findViewById(R.id.hold_view);
+        }
+
+        public void setHoldHeight(int height) {
+            if (hold_view != null) {
+                ViewGroup.LayoutParams vlp = hold_view.getLayoutParams();
+                vlp.height = height;
+                hold_view.setLayoutParams(vlp);
+            }
         }
     }
 

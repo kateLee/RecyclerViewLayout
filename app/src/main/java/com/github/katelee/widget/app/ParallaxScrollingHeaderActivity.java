@@ -4,8 +4,13 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.app.ActionBarActivity;
-import android.support.v7.widget.*;
-import android.view.*;
+import android.support.v7.widget.GridLayoutManager;
+import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
+import android.support.v7.widget.StaggeredGridLayoutManager;
+import android.view.LayoutInflater;
+import android.view.View;
+import android.view.ViewGroup;
 import android.widget.TextView;
 import com.github.katelee.widget.RecyclerViewLayout;
 
@@ -15,18 +20,16 @@ import java.util.List;
 /**
  * Created by Kate on 2015/5/8
  */
-public class RecyclerViewLayoutActivity extends ActionBarActivity {
+public class ParallaxScrollingHeaderActivity extends ActionBarActivity {
     RecyclerViewLayout recyclerViewLayout;
 
     LinearLayoutManager linearLayoutManager;
     StaggeredGridLayoutManager staggeredGridLayoutManager;
     GridLayoutManager gridLayoutManager;
     DataAdapter mAdapter;
-    View header;
 
     List<String> strings = new ArrayList<String>();
     Handler handler = new Handler();
-    boolean isAdjustHeader = true;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -93,8 +96,8 @@ public class RecyclerViewLayoutActivity extends ActionBarActivity {
                         tmp.add("11");
 
                         strings.addAll(tmp);
-                        mAdapter.notifyAdapterItemRangeInserted(mAdapter.getAdapterItemCount() - tmp.size(), 
-                        tmp.size());
+                        mAdapter.notifyAdapterItemRangeInserted(mAdapter.getAdapterItemCount() - tmp.size(),
+                                tmp.size());
                         mAdapter.setLoadingMore(false);
 
                         mAdapter.disableLoadMore();
@@ -104,36 +107,15 @@ public class RecyclerViewLayoutActivity extends ActionBarActivity {
         });
         mAdapter.enableLoadMore();
 
-        if (isAdjustHeader) {
-            recyclerViewLayout.setAdjustHeaderView(header = LayoutInflater.from(this).inflate(R.layout.view_header, null));
-            header.findViewById(R.id.linearlayout).setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    recyclerViewLayout.setLayoutManager(linearLayoutManager);
-                }
-            });
-            header.findViewById(R.id.gridlayout).setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    recyclerViewLayout.setLayoutManager(gridLayoutManager);
-                }
-            });
-            header.findViewById(R.id.staggeredgridlayout).setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    recyclerViewLayout.setLayoutManager(staggeredGridLayoutManager);
-                }
-            });
-        }
+        recyclerViewLayout.setParallaxScrollingHeaderView(
+                LayoutInflater.from(this).inflate(R.layout.view_parallax_scrolling_header, null));
+        recyclerViewLayout.setParallaxScrollingVelocity(0.3f);
     }
 
     private class DataAdapter extends RecyclerViewLayout.Adapter<DataHolder> {
         @Override
         protected View onHeaderCreateView(ViewGroup viewGroup) {
-            if (!isAdjustHeader) {
-                return LayoutInflater.from(viewGroup.getContext()).inflate(R.layout.view_header, viewGroup, false);
-            }
-            return super.onHeaderCreateView(viewGroup);
+            return LayoutInflater.from(viewGroup.getContext()).inflate(R.layout.view_auto_hiding_header, viewGroup, false);
         }
 
         @Override
@@ -161,34 +143,32 @@ public class RecyclerViewLayoutActivity extends ActionBarActivity {
         }
 
         @Override
-        public int getAdapterItemCount() {
-            return strings.size();
-        }
-
-        @Override
         protected void onHeaderBindViewHolder(RecyclerView.ViewHolder viewHolder) {
             super.onHeaderBindViewHolder(viewHolder);
 
-            if (!isAdjustHeader) {
-                viewHolder.itemView.findViewById(R.id.linearlayout).setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View v) {
-                        recyclerViewLayout.setLayoutManager(linearLayoutManager);
-                    }
-                });
-                viewHolder.itemView.findViewById(R.id.gridlayout).setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View v) {
-                        recyclerViewLayout.setLayoutManager(gridLayoutManager);
-                    }
-                });
-                viewHolder.itemView.findViewById(R.id.staggeredgridlayout).setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View v) {
-                        recyclerViewLayout.setLayoutManager(staggeredGridLayoutManager);
-                    }
-                });
-            }
+            viewHolder.itemView.findViewById(R.id.linearlayout).setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    recyclerViewLayout.setLayoutManager(linearLayoutManager);
+                }
+            });
+            viewHolder.itemView.findViewById(R.id.gridlayout).setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    recyclerViewLayout.setLayoutManager(gridLayoutManager);
+                }
+            });
+            viewHolder.itemView.findViewById(R.id.staggeredgridlayout).setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    recyclerViewLayout.setLayoutManager(staggeredGridLayoutManager);
+                }
+            });
+        }
+
+        @Override
+        public int getAdapterItemCount() {
+            return strings.size();
         }
     }
 

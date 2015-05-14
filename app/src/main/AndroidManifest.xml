@@ -6,12 +6,30 @@
                  android:icon="@drawable/ic_launcher"
                  android:theme="@style/AppTheme">
         <activity
-                android:name="com.github.katelee.widget.app.RecyclerViewLayoutActivity"
+                android:name=".MainActivity"
                 android:label="@string/app_name" >
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
                 <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        </activity>
+
+        <activity
+                android:name=".AutoHidingHeaderActivity"
+                android:label="@string/AutoHidingHeader">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+                <category android:name="category_demo_code" />
+            </intent-filter>
+        </activity>
+
+        <activity
+                android:name=".ParallaxScrollingHeaderActivity"
+                android:label="@string/ParallaxScrollingHeader">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+                <category android:name="category_demo_code" />
             </intent-filter>
         </activity>
 

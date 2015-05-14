@@ -10,19 +10,22 @@ import android.view.View;
 import android.view.ViewTreeObserver;
 import android.widget.FrameLayout;
 import com.github.katelee.widget.recyclerviewlayout.AdvanceAdapter;
-import com.github.katelee.widget.recyclerviewlayout.RecyclerViewWithHeaderListener;
+import com.github.katelee.widget.recyclerviewlayout.AutoHidingHeaderListener;
+import com.github.katelee.widget.recyclerviewlayout.ParallaxScrollingHeaderListener;
 
 /**
  * Created by Kate on 2015/5/7
  */
 public class RecyclerViewLayout extends SwipeRefreshLayout {
     private FrameLayout mFrameLayout;
-    private RecyclerView mRecyclerView;
-    private boolean mHeaderAdjust = false;
-    private View mAdjustHeader;
+    private final RecyclerView mRecyclerView;
+    private View mAutoHidingHeader;
+    private View mParallaxScrollingHeader;
     private Adapter<? extends RecyclerView.ViewHolder> mAdapter;
-    private RecyclerViewWithHeaderListener mHeaderListener;
+    private AutoHidingHeaderListener mAutoHidingHeaderListener;
+    private ParallaxScrollingHeaderListener mParallaxScrollingListener;
     private RecyclerView.OnScrollListener mScrollListener;
+    private float mParallaxScrollingVelocity = 1;
 
     public RecyclerViewLayout(Context context) {
         this(context, null);
@@ -43,10 +46,21 @@ public class RecyclerViewLayout extends SwipeRefreshLayout {
     }
 
     private void initialize() {
-        mHeaderListener = new RecyclerViewWithHeaderListener(mRecyclerView) {
+        mAutoHidingHeaderListener = new AutoHidingHeaderListener(mRecyclerView) {
             @Override
             public View getHeaderView() {
-                return mAdjustHeader;
+                return mAutoHidingHeader;
+            }
+        };
+        mParallaxScrollingListener = new ParallaxScrollingHeaderListener() {
+            @Override
+            public View getHeaderView() {
+                return mParallaxScrollingHeader;
+            }
+
+            @Override
+            public float getParallaxScrollingVelocity() {
+                return mParallaxScrollingVelocity;
             }
         };
         mRecyclerView.setOnScrollListener(new RecyclerView.OnScrollListener() {
@@ -54,8 +68,11 @@ public class RecyclerViewLayout extends SwipeRefreshLayout {
             public void onScrollStateChanged(RecyclerView recyclerView, int newState) {
                 super.onScrollStateChanged(recyclerView, newState);
 
-                if (mHeaderAdjust) {
-                    mHeaderListener.onScrollStateChanged(recyclerView, newState);
+                if (mAutoHidingHeader != null) {
+                    mAutoHidingHeaderListener.onScrollStateChanged(recyclerView, newState);
+                }
+                if (mParallaxScrollingHeader != null) {
+                    mParallaxScrollingListener.onScrollStateChanged(recyclerView, newState);
                 }
                 if (mScrollListener != null) {
                     mScrollListener.onScrollStateChanged(recyclerView, newState);
@@ -66,16 +83,17 @@ public class RecyclerViewLayout extends SwipeRefreshLayout {
             public void onScrolled(RecyclerView recyclerView, int dx, int dy) {
                 super.onScrolled(recyclerView, dx, dy);
 
-                if (mHeaderAdjust) {
-                    mHeaderListener.onScrolled(recyclerView, dx, dy);
+                if (mAutoHidingHeader != null) {
+                    mAutoHidingHeaderListener.onScrolled(recyclerView, dx, dy);
+                }
+                if (mParallaxScrollingHeader != null) {
+                    mParallaxScrollingListener.onScrolled(recyclerView, dx, dy);
                 }
                 if (mScrollListener != null) {
                     mScrollListener.onScrolled(recyclerView, dx, dy);
                 }
             }
         });
-
-
     }
 
     @Override
@@ -115,57 +133,140 @@ public class RecyclerViewLayout extends SwipeRefreshLayout {
         return mRecyclerView.getLayoutManager();
     }
 
-    public void setAdjustHeaderView(View view) {
-        mHeaderAdjust = true;
-        if (mAdjustHeader != null) {
-            mFrameLayout.removeView(mAdjustHeader);
+    /**
+     * not recommend to use {@link #setParallaxScrollingHeaderView} at the same time.
+     * @param view
+     */
+    public void setAutoHidingHeaderView(View view) {
+        if (mAutoHidingHeader != null) {
+            mFrameLayout.removeView(mAutoHidingHeader);
         }
         mFrameLayout.addView(view, new FrameLayout.LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.WRAP_CONTENT));
 
-        mAdjustHeader = view;
-        mAdapter.setAdjustHeaderView(view);
+        mAutoHidingHeader = view;
+        mAdapter.setAutoHidingHeaderView(view);
     }
 
-    public void removeAdjustHeaderView() {
-        mHeaderAdjust = false;
-        if (mAdjustHeader != null) {
-            mFrameLayout.removeView(mAdjustHeader);
+    public void removeAutoHidingHeaderView() {
+        if (mAutoHidingHeader != null) {
+            mFrameLayout.removeView(mAutoHidingHeader);
         }
 
-        mAdjustHeader = null;
-        mAdapter.setAdjustHeaderView(null);
+        mAutoHidingHeader = null;
+        mAdapter.setAutoHidingHeaderView(null);
         mAdapter.notifyHeaderViewChanged();
     }
 
-    public View getAdjustHeaderView() {
-        return mAdjustHeader;
+    public View getAutoHidingHeaderView() {
+        return mAutoHidingHeader;
+    }
+
+    /**
+     * not recommend to use {@link #setAutoHidingHeaderView} at the same time.
+     * @param view
+     */
+    public void setParallaxScrollingHeaderView(View view) {
+        if (mParallaxScrollingHeader != null) {
+            mFrameLayout.removeView(mParallaxScrollingHeader);
+        }
+        mFrameLayout.addView(view, 0,
+                new FrameLayout.LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.WRAP_CONTENT));
+
+        mParallaxScrollingHeader = view;
+        mAdapter.setParallaxScrollingHeaderView(view);
+    }
+
+    public void removeParallaxScrollingHeaderView() {
+        if (mParallaxScrollingHeader != null) {
+            mFrameLayout.removeView(mParallaxScrollingHeader);
+        }
+
+        mParallaxScrollingHeader = null;
+        mAdapter.setParallaxScrollingHeaderView(null);
+        mAdapter.notifyHeaderViewChanged();
+    }
+
+    public View getParallaxScrollingHeaderView() {
+        return mParallaxScrollingHeader;
+    }
+
+    /**
+     * set header velocity relative proportion with scroll
+     * @param velocity recommend 0 to 1
+     */
+    public void setParallaxScrollingVelocity(float velocity) {
+        mParallaxScrollingVelocity = velocity;
+    }
+
+    public void setRecyclerViewCilpChildren(boolean clipChildren) {
+        mRecyclerView.setClipChildren(clipChildren);
+    }
+
+    public void setRecyclerViewClipToPadding(boolean clipToPadding) {
+        mRecyclerView.setClipToPadding(clipToPadding);
+    }
+
+    public void setRecyclerViewPadding(int left, int top, int right, int bottom) {
+        mRecyclerView.setPadding(left, top, right, bottom);
+    }
+
+    public void setRecyclerViewItemAnimator(RecyclerView.ItemAnimator animator) {
+        mRecyclerView.setItemAnimator(animator);
+    }
+
+    public void setRecyclerViewItemAnimator(RecyclerView.ItemDecoration decor) {
+        mRecyclerView.addItemDecoration(decor);
+    }
+
+    public void setRecyclerViewItemAnimator(RecyclerView.OnItemTouchListener listener) {
+        mRecyclerView.addOnItemTouchListener(listener);
     }
 
     public static abstract class Adapter<VH extends RecyclerView.ViewHolder> extends AdvanceAdapter<VH> {
 
-        private View adjustHeaderView;
+        private View autoHidingHeaderView;
+        private View parallaxScrollingHeaderView;
 
         @Override
         protected void onHeaderBindViewHolder(RecyclerView.ViewHolder viewHolder) {
             super.onHeaderBindViewHolder(viewHolder);
 
-            if (adjustHeaderView != null) {
-                viewHolder.itemView.setPadding(0, adjustHeaderView.getHeight(), 0, 0);
-            }
-            else {
-                viewHolder.itemView.setPadding(0, 0, 0, 0);
+            int holdHeight = autoHidingHeaderView == null ? 0 : autoHidingHeaderView.getHeight();
+            holdHeight = parallaxScrollingHeaderView == null ? holdHeight :
+                    holdHeight + parallaxScrollingHeaderView.getHeight();
+            if (viewHolder instanceof AdvanceHolder) {
+                ((AdvanceHolder) viewHolder).setHoldHeight(holdHeight);
             }
         }
 
-        private void setAdjustHeaderView(View view) {
-            this.adjustHeaderView = view;
+        private void setAutoHidingHeaderView(View view) {
+            this.autoHidingHeaderView = view;
 
-            adjustHeaderView.getViewTreeObserver().addOnGlobalLayoutListener(
-                    new OnItemGlobalLayoutListener(adjustHeaderView) {
+            autoHidingHeaderView.getViewTreeObserver().addOnGlobalLayoutListener(
+                    new OnItemGlobalLayoutListener(autoHidingHeaderView) {
                         @Override
                         public void onGlobalLayout(View view) {
                             // make sure it is not called anymore
                             view.getViewTreeObserver().removeGlobalOnLayoutListener(this);
+                            if (parallaxScrollingHeaderView != null) {
+                                parallaxScrollingHeaderView.setTranslationY(autoHidingHeaderView.getHeight());
+                            }
+                            notifyHeaderViewChanged();
+                        }
+                    });
+        }
+
+        private void setParallaxScrollingHeaderView(View view) {
+            this.parallaxScrollingHeaderView = view;
+
+            parallaxScrollingHeaderView.getViewTreeObserver().addOnGlobalLayoutListener(
+                    new OnItemGlobalLayoutListener(parallaxScrollingHeaderView) {
+                        @Override
+                        public void onGlobalLayout(View view) {
+                            // make sure it is not called anymore
+                            view.getViewTreeObserver().removeGlobalOnLayoutListener(this);
+                            parallaxScrollingHeaderView.setTranslationY(autoHidingHeaderView == null ?
+                                    0 : autoHidingHeaderView.getHeight());
                             notifyHeaderViewChanged();
                         }
                     });
