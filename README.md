@@ -6,9 +6,15 @@ RecyclerViewLayout
 Developing Project
 
 ## Table of Contents
+* [Demo](#demo)
 * [English info](#english-info)
 * [中文介紹](#chinese-info)
 * [Usage](#usage)
+
+### Demo
+![auto_hiding](https://raw.githubusercontent.com/kateLee/RecyclerViewLayout/master/images/auto_hiding.gif)
+![parallax_scrolling](https://raw.githubusercontent.com/kateLee/RecyclerViewLayout/master/images/parallax_scrolling.gif)
+![load_more](https://raw.githubusercontent.com/kateLee/RecyclerViewLayout/master/images/load_more.gif)
 
 ### English info
 Base on android.support.v7.RecyclerView
@@ -40,6 +46,6 @@ repositories {
 }
 
 dependencies {
-    compile 'com.github.katelee.widget:recyclerviewlayout:0.9.1'
+    compile 'com.github.katelee.widget:recyclerviewlayout:0.9.2'
 }
 ```

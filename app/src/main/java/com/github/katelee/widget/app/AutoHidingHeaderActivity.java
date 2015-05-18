@@ -44,14 +44,11 @@ public class AutoHidingHeaderActivity extends ActionBarActivity {
         staggeredGridLayoutManager = new StaggeredGridLayoutManager(2, StaggeredGridLayoutManager.VERTICAL);
         gridLayoutManager = new GridLayoutManager(this, 2);
 
-        strings.add("0");
-        strings.add("1");
-        strings.add("2");
-        strings.add("3");
-        strings.add("4");
-        strings.add("5");
+        for (int i = 0; i < 10; i++) {
+            strings.add(i + "");
+        }
 
-        recyclerViewLayout.setLayoutManager(linearLayoutManager);
+        recyclerViewLayout.setLayoutManager(staggeredGridLayoutManager);
         recyclerViewLayout.setAdapter(mAdapter = new DataAdapter());
 
         recyclerViewLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
@@ -65,12 +62,9 @@ public class AutoHidingHeaderActivity extends ActionBarActivity {
                         strings.clear();
 
                         List<String> tmp = new ArrayList<String>();
-                        tmp.add("0");
-                        tmp.add("1");
-                        tmp.add("2");
-                        tmp.add("3");
-                        tmp.add("4");
-                        tmp.add("5");
+                        for (int i = 0; i < 10; i++) {
+                            tmp.add(i + "");
+                        }
 
                         strings.addAll(tmp);
                         mAdapter.notifyDataSetChanged();
@@ -89,12 +83,10 @@ public class AutoHidingHeaderActivity extends ActionBarActivity {
                     @Override
                     public void run() {
                         List<String> tmp = new ArrayList<String>();
-                        tmp.add("6");
-                        tmp.add("7");
-                        tmp.add("8");
-                        tmp.add("9");
-                        tmp.add("10");
-                        tmp.add("11");
+
+                        for (int i = 10; i < 20; i++) {
+                            tmp.add(i + "");
+                        }
 
                         strings.addAll(tmp);
                         mAdapter.notifyAdapterItemRangeInserted(mAdapter.getAdapterItemCount() - tmp.size(), 

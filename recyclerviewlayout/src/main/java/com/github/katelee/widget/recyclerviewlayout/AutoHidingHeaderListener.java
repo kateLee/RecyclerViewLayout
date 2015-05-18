@@ -1,10 +1,10 @@
 package com.github.katelee.widget.recyclerviewlayout;
 
 import android.os.Handler;
-import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.support.v7.widget.StaggeredGridLayoutManager;
 import android.view.View;
+
+import static com.github.katelee.widget.recyclerviewlayout.Utility.findVisiblePosition;
 
 /**
  * Created by Kate on 2015/5/5
@@ -14,7 +14,6 @@ public abstract class AutoHidingHeaderListener extends RecyclerView.OnScrollList
     private final long frame_slide_time = 250;
     private Handler mHandler = new Handler();
     private final OnStopRunnable mOnStopRunnable;
-//    private boolean isVertical;
 
     public AutoHidingHeaderListener(RecyclerView recyclerView) {
         mOnStopRunnable = new OnStopRunnable(recyclerView);
@@ -27,12 +26,7 @@ public abstract class AutoHidingHeaderListener extends RecyclerView.OnScrollList
             return;
         }
 
-//        if (isVertical) {
-            getHeaderView().animate().translationY(-size).setDuration(frame_slide_time);
-//        }
-//        else {
-//            getHeaderView().animate().translationX(-size).setDuration(frame_slide_time);
-//        }
+        getHeaderView().animate().translationY(-size).setDuration(frame_slide_time);
     }
 
     private void showAnimate() {
@@ -40,12 +34,7 @@ public abstract class AutoHidingHeaderListener extends RecyclerView.OnScrollList
             return;
         }
 
-//        if (isVertical) {
-            getHeaderView().animate().translationY(0).setDuration(frame_slide_time);
-//        }
-//        else {
-//            getHeaderView().animate().translationX(0).setDuration(frame_slide_time);
-//        }
+        getHeaderView().animate().translationY(0).setDuration(frame_slide_time);
     }
 
     private void adjustState(RecyclerView recyclerView) {
@@ -55,38 +44,34 @@ public abstract class AutoHidingHeaderListener extends RecyclerView.OnScrollList
             return;
         }
 
-//        if (isVertical) {
-            int height = getHeaderView().getHeight();
-            float chY = getHeaderView().getTranslationY();
-            if (chY == 0 || chY == -height) {
-                return;
-            }
+        int height = getHeaderView().getHeight();
+        float chY = getHeaderView().getTranslationY();
+        if (chY == 0 || chY == -height) {
+            return;
+        }
 
-            if (slideUp) {
-                if (findVisiblePosition(recyclerView) == 0) {
-                    recyclerView.smoothScrollBy(0, height + recyclerView.getChildAt(0).getTop());
+        boolean isShow;
+        if (slideUp) {
+            isShow = false;
+            int top  = recyclerView.getChildAt(0).getTop();
+            if (findVisiblePosition(recyclerView) == 0) {
+                if (top != 0) {
+                    recyclerView.smoothScrollBy(0, height + top);
                 }
-                hideAnimate(height);
-            } else {
-                showAnimate();
+                else {
+                    isShow = true;
+                }
             }
-//        }
-//        else {
-//            int width = getHeaderView().getWidth();
-//            float chX = getHeaderView().getTranslationY();
-//            if (chX == 0 || chX == -width) {
-//                return;
-//            }
-//
-//            if (slideUp) {
-//                if (findVisiblePosition(recyclerView) == 0) {
-//                    recyclerView.smoothScrollBy(width + recyclerView.getChildAt(0).getTop(), 0);
-//                }
-//                hideAnimate(width);
-//            } else {
-//                showAnimate();
-//            }
-//        }
+        } else {
+            isShow = true;
+        }
+
+        if (isShow) {
+            showAnimate();
+        }
+        else {
+            hideAnimate(height);
+        }
     }
 
     @Override
@@ -99,37 +84,16 @@ public abstract class AutoHidingHeaderListener extends RecyclerView.OnScrollList
             return;
         }
 
-//        if (dy != 0) {
-//            isVertical = true;
-//        }
-//        if (dx != 0) {
-//            isVertical = false;
-//        }
-
-//        if (isVertical) {
-            int height = getHeaderView().getHeight();
-            float chY = getHeaderView().getTranslationY();
-            float transY = 0;
-            if (canScrollDown(recyclerView)) {
-                slideUp = dy > 0; //finger move down to slide up view
-                transY = chY - dy;
-                transY = transY <= -height ? -height : transY;
-                transY = transY >= 0 ? 0 : transY;
-            }
-            getHeaderView().setTranslationY(transY);
-//        }
-//        else {
-//            int width = getHeaderView().getWidth();
-//            float chX = getHeaderView().getTranslationX();
-//            float transX = 0;
-//            if (canScrollEnd(recyclerView)) {
-//                slideUp = dx > 0; //finger move down to slide up view
-//                transX = chX - dx;
-//                transX = transX <= -width ? -width : transX;
-//                transX = transX >= 0 ? 0 : transX;
-//            }
-//            getHeaderView().setTranslationX(transX);
-//        }
+        int height = getHeaderView().getHeight();
+        float chY = getHeaderView().getTranslationY();
+        float transY = 0;
+        if (canScrollDown(recyclerView)) {
+            slideUp = dy > 0; //finger move down to slide up view
+            transY = chY - dy;
+            transY = transY <= -height ? -height : transY;
+            transY = transY >= 0 ? 0 : transY;
+        }
+        getHeaderView().setTranslationY(transY);
 
         mHandler.postDelayed(mOnStopRunnable, 300);
     }
@@ -160,24 +124,5 @@ public abstract class AutoHidingHeaderListener extends RecyclerView.OnScrollList
      */
     private boolean canScrollEnd(RecyclerView recyclerView) {
         return recyclerView.canScrollHorizontally(1) || findVisiblePosition(recyclerView) != 0;
-    }
-
-
-    private int findVisiblePosition(RecyclerView recyclerView) {
-        RecyclerView.LayoutManager layoutManager = recyclerView.getLayoutManager();
-        if (layoutManager instanceof LinearLayoutManager) {
-            return ((LinearLayoutManager) layoutManager).findFirstVisibleItemPosition();
-        }
-        else if (layoutManager instanceof StaggeredGridLayoutManager) {
-            int[] firstVisibleItems = ((StaggeredGridLayoutManager) layoutManager).findFirstVisibleItemPositions(null);
-            int firstVisibleItem = firstVisibleItems[0];
-            for (int tmp : firstVisibleItems) {
-                if (firstVisibleItem > tmp) {
-                    firstVisibleItem = tmp;
-                }
-            }
-            return firstVisibleItem;
-        }
-        throw new IllegalArgumentException("only support LinearLayoutManager and StaggeredGridLayoutManager");
     }
 }

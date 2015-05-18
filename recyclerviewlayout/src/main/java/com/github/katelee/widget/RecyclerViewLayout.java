@@ -18,6 +18,7 @@ import com.github.katelee.widget.recyclerviewlayout.ParallaxScrollingHeaderListe
  */
 public class RecyclerViewLayout extends SwipeRefreshLayout {
     private FrameLayout mFrameLayout;
+    private FrameLayout mParallaxScrollingLayout;
     private final RecyclerView mRecyclerView;
     private View mAutoHidingHeader;
     private View mParallaxScrollingHeader;
@@ -42,6 +43,10 @@ public class RecyclerViewLayout extends SwipeRefreshLayout {
         mRecyclerView.setLayoutParams(new LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.MATCH_PARENT));
         mFrameLayout.addView(mRecyclerView);
 
+        mParallaxScrollingLayout = new FrameLayout(context);
+        mParallaxScrollingLayout.setLayoutParams(new LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.WRAP_CONTENT));
+        mFrameLayout.addView(mParallaxScrollingLayout);
+
         initialize();
     }
 
@@ -54,12 +59,17 @@ public class RecyclerViewLayout extends SwipeRefreshLayout {
         };
         mParallaxScrollingListener = new ParallaxScrollingHeaderListener() {
             @Override
-            public View getHeaderView() {
+            public View getSceneryView() {
                 return mParallaxScrollingHeader;
             }
 
             @Override
-            public float getParallaxScrollingVelocity() {
+            public View getWindowView() {
+                return mParallaxScrollingLayout;
+            }
+
+            @Override
+            public float getVelocity() {
                 return mParallaxScrollingVelocity;
             }
         };
@@ -127,6 +137,12 @@ public class RecyclerViewLayout extends SwipeRefreshLayout {
                 }
             });
         }
+        if (mParallaxScrollingLayout != null) {
+            mParallaxScrollingLayout.setTranslationY(0);
+        }
+        if (mParallaxScrollingHeader != null) {
+            mParallaxScrollingHeader.setTranslationY(0);
+        }
     }
 
     public RecyclerView.LayoutManager getLayoutManager() {
@@ -141,7 +157,7 @@ public class RecyclerViewLayout extends SwipeRefreshLayout {
         if (mAutoHidingHeader != null) {
             mFrameLayout.removeView(mAutoHidingHeader);
         }
-        mFrameLayout.addView(view, new FrameLayout.LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.WRAP_CONTENT));
+        mFrameLayout.addView(view, new LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.WRAP_CONTENT));
 
         mAutoHidingHeader = view;
         mAdapter.setAutoHidingHeaderView(view);
@@ -167,10 +183,9 @@ public class RecyclerViewLayout extends SwipeRefreshLayout {
      */
     public void setParallaxScrollingHeaderView(View view) {
         if (mParallaxScrollingHeader != null) {
-            mFrameLayout.removeView(mParallaxScrollingHeader);
+            mParallaxScrollingLayout.removeView(mParallaxScrollingHeader);
         }
-        mFrameLayout.addView(view, 0,
-                new FrameLayout.LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.WRAP_CONTENT));
+        mParallaxScrollingLayout.addView(view, new LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.WRAP_CONTENT));
 
         mParallaxScrollingHeader = view;
         mAdapter.setParallaxScrollingHeaderView(view);
@@ -231,11 +246,11 @@ public class RecyclerViewLayout extends SwipeRefreshLayout {
         protected void onHeaderBindViewHolder(RecyclerView.ViewHolder viewHolder) {
             super.onHeaderBindViewHolder(viewHolder);
 
-            int holdHeight = autoHidingHeaderView == null ? 0 : autoHidingHeaderView.getHeight();
-            holdHeight = parallaxScrollingHeaderView == null ? holdHeight :
-                    holdHeight + parallaxScrollingHeaderView.getHeight();
+            int holdHeight0 = autoHidingHeaderView == null ? 0 : autoHidingHeaderView.getHeight();
+            int holdHeight1 = parallaxScrollingHeaderView == null ? 0 : parallaxScrollingHeaderView.getHeight();
+
             if (viewHolder instanceof AdvanceHolder) {
-                ((AdvanceHolder) viewHolder).setHoldHeight(holdHeight);
+                ((AdvanceHolder) viewHolder).setHoldHeight(Math.max(holdHeight0, holdHeight1));
             }
         }
 
@@ -248,9 +263,6 @@ public class RecyclerViewLayout extends SwipeRefreshLayout {
                         public void onGlobalLayout(View view) {
                             // make sure it is not called anymore
                             view.getViewTreeObserver().removeGlobalOnLayoutListener(this);
-                            if (parallaxScrollingHeaderView != null) {
-                                parallaxScrollingHeaderView.setTranslationY(autoHidingHeaderView.getHeight());
-                            }
                             notifyHeaderViewChanged();
                         }
                     });
@@ -265,8 +277,6 @@ public class RecyclerViewLayout extends SwipeRefreshLayout {
                         public void onGlobalLayout(View view) {
                             // make sure it is not called anymore
                             view.getViewTreeObserver().removeGlobalOnLayoutListener(this);
-                            parallaxScrollingHeaderView.setTranslationY(autoHidingHeaderView == null ?
-                                    0 : autoHidingHeaderView.getHeight());
                             notifyHeaderViewChanged();
                         }
                     });
