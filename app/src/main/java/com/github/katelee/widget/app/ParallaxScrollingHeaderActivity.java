@@ -44,11 +44,11 @@ public class ParallaxScrollingHeaderActivity extends ActionBarActivity {
         gridLayoutManager = new GridLayoutManager(this, 2);
 
         for (int i = 0; i < 10; i++) {
-            strings.add(i + "");
+            strings.add(String.valueOf(i));
         }
 
-        recyclerViewLayout.setLayoutManager(staggeredGridLayoutManager);
-        recyclerViewLayout.setAdapter(mAdapter = new DataAdapter());
+        recyclerViewLayout.getRecyclerView().setLayoutManager(staggeredGridLayoutManager);
+        recyclerViewLayout.getRecyclerView().setAdapter(mAdapter = new DataAdapter());
 
         recyclerViewLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
             @Override
@@ -62,7 +62,7 @@ public class ParallaxScrollingHeaderActivity extends ActionBarActivity {
 
                         List<String> tmp = new ArrayList<String>();
                         for (int i = 0; i < 10; i++) {
-                            tmp.add(i + "");
+                            tmp.add(String.valueOf(i));
                         }
 
                         strings.addAll(tmp);
@@ -83,7 +83,7 @@ public class ParallaxScrollingHeaderActivity extends ActionBarActivity {
                     public void run() {
                         List<String> tmp = new ArrayList<String>();
                         for (int i = 10; i < 20; i++) {
-                            tmp.add(i + "");
+                            tmp.add(String.valueOf(i));
                         }
 
                         strings.addAll(tmp);
@@ -106,7 +106,8 @@ public class ParallaxScrollingHeaderActivity extends ActionBarActivity {
     private class DataAdapter extends RecyclerViewLayout.Adapter<DataHolder> {
         @Override
         protected View onHeaderCreateView(ViewGroup viewGroup) {
-            return LayoutInflater.from(viewGroup.getContext()).inflate(R.layout.view_auto_hiding_header, viewGroup, false);
+            return LayoutInflater.from(viewGroup.getContext()).inflate(R.layout.view_auto_hiding_header, viewGroup,
+                    false);
         }
 
         @Override

@@ -7,10 +7,10 @@ import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.AttributeSet;
 import android.view.View;
-import android.view.ViewTreeObserver;
 import android.widget.FrameLayout;
-import com.github.katelee.widget.recyclerviewlayout.AdvanceAdapter;
 import com.github.katelee.widget.recyclerviewlayout.AutoHidingHeaderListener;
+import com.github.katelee.widget.recyclerviewlayout.CustomAdapter;
+import com.github.katelee.widget.recyclerviewlayout.CustomRecyclerView;
 import com.github.katelee.widget.recyclerviewlayout.ParallaxScrollingHeaderListener;
 
 /**
@@ -19,13 +19,11 @@ import com.github.katelee.widget.recyclerviewlayout.ParallaxScrollingHeaderListe
 public class RecyclerViewLayout extends SwipeRefreshLayout {
     private FrameLayout mFrameLayout;
     private FrameLayout mParallaxScrollingLayout;
-    private final RecyclerView mRecyclerView;
+    private final CustomRecyclerView mRecyclerView;
     private View mAutoHidingHeader;
     private View mParallaxScrollingHeader;
-    private Adapter<? extends RecyclerView.ViewHolder> mAdapter;
     private AutoHidingHeaderListener mAutoHidingHeaderListener;
     private ParallaxScrollingHeaderListener mParallaxScrollingListener;
-    private RecyclerView.OnScrollListener mScrollListener;
     private float mParallaxScrollingVelocity = 1;
 
     public RecyclerViewLayout(Context context) {
@@ -39,7 +37,7 @@ public class RecyclerViewLayout extends SwipeRefreshLayout {
         mFrameLayout.setLayoutParams(new LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.MATCH_PARENT));
         addView(mFrameLayout);
 
-        mRecyclerView = new RecyclerView(context);
+        mRecyclerView = new CustomRecyclerView(context);
         mRecyclerView.setLayoutParams(new LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.MATCH_PARENT));
         mFrameLayout.addView(mRecyclerView);
 
@@ -73,7 +71,7 @@ public class RecyclerViewLayout extends SwipeRefreshLayout {
                 return mParallaxScrollingVelocity;
             }
         };
-        mRecyclerView.setOnScrollListener(new RecyclerView.OnScrollListener() {
+        mRecyclerView.addOnScrollListener(new RecyclerView.OnScrollListener() {
             @Override
             public void onScrollStateChanged(RecyclerView recyclerView, int newState) {
                 super.onScrollStateChanged(recyclerView, newState);
@@ -83,9 +81,6 @@ public class RecyclerViewLayout extends SwipeRefreshLayout {
                 }
                 if (mParallaxScrollingHeader != null) {
                     mParallaxScrollingListener.onScrollStateChanged(recyclerView, newState);
-                }
-                if (mScrollListener != null) {
-                    mScrollListener.onScrollStateChanged(recyclerView, newState);
                 }
             }
 
@@ -99,8 +94,27 @@ public class RecyclerViewLayout extends SwipeRefreshLayout {
                 if (mParallaxScrollingHeader != null) {
                     mParallaxScrollingListener.onScrolled(recyclerView, dx, dy);
                 }
-                if (mScrollListener != null) {
-                    mScrollListener.onScrolled(recyclerView, dx, dy);
+            }
+        });
+        mRecyclerView.addOnChangeLayoutManagerListener(new CustomRecyclerView.OnChangeLayoutManagerListener() {
+            @Override
+            public void onChange(RecyclerView.LayoutManager layout) {
+
+                if (layout instanceof GridLayoutManager) {
+                    final GridLayoutManager gridLayoutManager = ((GridLayoutManager) layout);
+                    ((GridLayoutManager) layout).setSpanSizeLookup(new GridLayoutManager.SpanSizeLookup() {
+                        @Override
+                        public int getSpanSize(int position) {
+                            return mRecyclerView.getAdapter().isFullSpan(position) ?
+                                    gridLayoutManager.getSpanCount() : 1;
+                        }
+                    });
+                }
+                if (mParallaxScrollingLayout != null) {
+                    mParallaxScrollingLayout.setTranslationY(0);
+                }
+                if (mParallaxScrollingHeader != null) {
+                    mParallaxScrollingHeader.setTranslationY(0);
                 }
             }
         });
@@ -116,35 +130,34 @@ public class RecyclerViewLayout extends SwipeRefreshLayout {
         }
     }
 
+    /**
+     * @deprecated use {@link #getRecyclerView().setOnScrollListener(RecyclerView.OnScrollListener)} instead
+     */
     public void setOnScrollListener(RecyclerView.OnScrollListener listener) {
-        mScrollListener = listener;
+        mRecyclerView.setOnScrollListener(listener);
     }
 
+    public CustomRecyclerView getRecyclerView() {
+        return mRecyclerView;
+    }
+
+    /**
+     * @deprecated use {@link #getRecyclerView().setAdapter(CustomAdapter)} instead
+     */
     public void setAdapter(Adapter<? extends RecyclerView.ViewHolder> adapter) {
-        mAdapter = adapter;
-        mRecyclerView.setAdapter(mAdapter);
+        mRecyclerView.setAdapter(adapter);
     }
 
+    /**
+     * @deprecated use {@link #getRecyclerView().setLayoutManager(RecyclerView.LayoutManager)} instead
+     */
     public void setLayoutManager(RecyclerView.LayoutManager layout) {
         mRecyclerView.setLayoutManager(layout);
-
-        if (layout instanceof GridLayoutManager) {
-            final GridLayoutManager gridLayoutManager = ((GridLayoutManager) layout);
-            ((GridLayoutManager) layout).setSpanSizeLookup(new GridLayoutManager.SpanSizeLookup() {
-                @Override
-                public int getSpanSize(int position) {
-                    return mAdapter.isFullSpan(position) ? gridLayoutManager.getSpanCount() : 1;
-                }
-            });
-        }
-        if (mParallaxScrollingLayout != null) {
-            mParallaxScrollingLayout.setTranslationY(0);
-        }
-        if (mParallaxScrollingHeader != null) {
-            mParallaxScrollingHeader.setTranslationY(0);
-        }
     }
-
+     
+    /**
+     * @deprecated use {@link #getRecyclerView().getLayoutManager()} instead
+     */
     public RecyclerView.LayoutManager getLayoutManager() {
         return mRecyclerView.getLayoutManager();
     }
@@ -160,7 +173,7 @@ public class RecyclerViewLayout extends SwipeRefreshLayout {
         mFrameLayout.addView(view, new LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.WRAP_CONTENT));
 
         mAutoHidingHeader = view;
-        mAdapter.setAutoHidingHeaderView(view);
+        mRecyclerView.getAdapter().setAutoHidingHeaderView(view);
     }
 
     public void removeAutoHidingHeaderView() {
@@ -169,8 +182,8 @@ public class RecyclerViewLayout extends SwipeRefreshLayout {
         }
 
         mAutoHidingHeader = null;
-        mAdapter.setAutoHidingHeaderView(null);
-        mAdapter.notifyHeaderViewChanged();
+        mRecyclerView.getAdapter().setAutoHidingHeaderView(null);
+        mRecyclerView.getAdapter().notifyHeaderViewChanged();
     }
 
     public View getAutoHidingHeaderView() {
@@ -188,7 +201,7 @@ public class RecyclerViewLayout extends SwipeRefreshLayout {
         mParallaxScrollingLayout.addView(view, new LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.WRAP_CONTENT));
 
         mParallaxScrollingHeader = view;
-        mAdapter.setParallaxScrollingHeaderView(view);
+        mRecyclerView.getAdapter().setParallaxScrollingHeaderView(view);
     }
 
     public void removeParallaxScrollingHeaderView() {
@@ -197,8 +210,8 @@ public class RecyclerViewLayout extends SwipeRefreshLayout {
         }
 
         mParallaxScrollingHeader = null;
-        mAdapter.setParallaxScrollingHeaderView(null);
-        mAdapter.notifyHeaderViewChanged();
+        mRecyclerView.getAdapter().setParallaxScrollingHeaderView(null);
+        mRecyclerView.getAdapter().notifyHeaderViewChanged();
     }
 
     public View getParallaxScrollingHeaderView() {
@@ -213,88 +226,47 @@ public class RecyclerViewLayout extends SwipeRefreshLayout {
         mParallaxScrollingVelocity = velocity;
     }
 
+    /**
+     * @deprecated use {@link #getRecyclerView().setRecyclerViewCilpChildren(boolean)} instead
+     */
     public void setRecyclerViewCilpChildren(boolean clipChildren) {
         mRecyclerView.setClipChildren(clipChildren);
     }
 
+    /**
+     * @deprecated use {@link #getRecyclerView().setClipToPadding(boolean)} instead
+     */
     public void setRecyclerViewClipToPadding(boolean clipToPadding) {
         mRecyclerView.setClipToPadding(clipToPadding);
     }
 
+    /**
+     * @deprecated use {@link #getRecyclerView().setPadding(int, int, int, int)} instead
+     */
     public void setRecyclerViewPadding(int left, int top, int right, int bottom) {
         mRecyclerView.setPadding(left, top, right, bottom);
     }
 
+    /**
+     * @deprecated use {@link #getRecyclerView().setItemAnimator(RecyclerView.ItemAnimator)} instead
+     */
     public void setRecyclerViewItemAnimator(RecyclerView.ItemAnimator animator) {
         mRecyclerView.setItemAnimator(animator);
     }
 
+    /**
+     * @deprecated use {@link #getRecyclerView().addItemDecoration(RecyclerView.ItemDecoration)} instead
+     */
     public void setRecyclerViewItemAnimator(RecyclerView.ItemDecoration decor) {
         mRecyclerView.addItemDecoration(decor);
     }
 
+    /**
+     * @deprecated use {@link #getRecyclerView().addOnItemTouchListener(RecyclerView.OnItemTouchListener)} instead
+     */
     public void setRecyclerViewItemAnimator(RecyclerView.OnItemTouchListener listener) {
         mRecyclerView.addOnItemTouchListener(listener);
     }
 
-    public static abstract class Adapter<VH extends RecyclerView.ViewHolder> extends AdvanceAdapter<VH> {
-
-        private View autoHidingHeaderView;
-        private View parallaxScrollingHeaderView;
-
-        @Override
-        protected void onHeaderBindViewHolder(RecyclerView.ViewHolder viewHolder) {
-            super.onHeaderBindViewHolder(viewHolder);
-
-            int holdHeight0 = autoHidingHeaderView == null ? 0 : autoHidingHeaderView.getHeight();
-            int holdHeight1 = parallaxScrollingHeaderView == null ? 0 : parallaxScrollingHeaderView.getHeight();
-
-            if (viewHolder instanceof AdvanceHolder) {
-                ((AdvanceHolder) viewHolder).setHoldHeight(Math.max(holdHeight0, holdHeight1));
-            }
-        }
-
-        private void setAutoHidingHeaderView(View view) {
-            this.autoHidingHeaderView = view;
-
-            autoHidingHeaderView.getViewTreeObserver().addOnGlobalLayoutListener(
-                    new OnItemGlobalLayoutListener(autoHidingHeaderView) {
-                        @Override
-                        public void onGlobalLayout(View view) {
-                            // make sure it is not called anymore
-                            view.getViewTreeObserver().removeGlobalOnLayoutListener(this);
-                            notifyHeaderViewChanged();
-                        }
-                    });
-        }
-
-        private void setParallaxScrollingHeaderView(View view) {
-            this.parallaxScrollingHeaderView = view;
-
-            parallaxScrollingHeaderView.getViewTreeObserver().addOnGlobalLayoutListener(
-                    new OnItemGlobalLayoutListener(parallaxScrollingHeaderView) {
-                        @Override
-                        public void onGlobalLayout(View view) {
-                            // make sure it is not called anymore
-                            view.getViewTreeObserver().removeGlobalOnLayoutListener(this);
-                            notifyHeaderViewChanged();
-                        }
-                    });
-        }
-
-        private abstract class OnItemGlobalLayoutListener implements ViewTreeObserver.OnGlobalLayoutListener {
-            private View view;
-
-            protected OnItemGlobalLayoutListener(View view) {
-                this.view = view;
-            }
-
-            abstract public void onGlobalLayout(View view);
-
-            @Override
-            public void onGlobalLayout() {
-                onGlobalLayout(view);
-            }
-        }
-    }
+    public static abstract class Adapter<VH extends RecyclerView.ViewHolder> extends CustomAdapter<VH> {}
 }

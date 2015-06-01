@@ -46,6 +46,6 @@ repositories {
 }
 
 dependencies {
-    compile 'com.github.katelee.widget:recyclerviewlayout:0.9.2'
+    compile 'com.github.katelee.widget:recyclerviewlayout:0.9.3'
 }
 ```

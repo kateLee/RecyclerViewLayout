@@ -45,11 +45,11 @@ public class AutoHidingHeaderActivity extends ActionBarActivity {
         gridLayoutManager = new GridLayoutManager(this, 2);
 
         for (int i = 0; i < 10; i++) {
-            strings.add(i + "");
+            strings.add(String.valueOf(i));
         }
 
-        recyclerViewLayout.setLayoutManager(staggeredGridLayoutManager);
-        recyclerViewLayout.setAdapter(mAdapter = new DataAdapter());
+        recyclerViewLayout.getRecyclerView().setLayoutManager(staggeredGridLayoutManager);
+        recyclerViewLayout.getRecyclerView().setAdapter(mAdapter = new DataAdapter());
 
         recyclerViewLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
             @Override
@@ -63,7 +63,7 @@ public class AutoHidingHeaderActivity extends ActionBarActivity {
 
                         List<String> tmp = new ArrayList<String>();
                         for (int i = 0; i < 10; i++) {
-                            tmp.add(i + "");
+                            tmp.add(String.valueOf(i));
                         }
 
                         strings.addAll(tmp);
@@ -85,7 +85,7 @@ public class AutoHidingHeaderActivity extends ActionBarActivity {
                         List<String> tmp = new ArrayList<String>();
 
                         for (int i = 10; i < 20; i++) {
-                            tmp.add(i + "");
+                            tmp.add(String.valueOf(i));
                         }
 
                         strings.addAll(tmp);
