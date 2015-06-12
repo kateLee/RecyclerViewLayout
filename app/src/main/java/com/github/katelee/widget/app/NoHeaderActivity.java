@@ -148,6 +148,11 @@ public class NoHeaderActivity extends AppCompatActivity {
         public int getAdapterItemCount() {
             return strings.size();
         }
+
+        @Override
+        public boolean hasHeader() {
+            return false;
+        }
     }
 
     private class DataHolder extends RecyclerView.ViewHolder {

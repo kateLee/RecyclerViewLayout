@@ -156,6 +156,11 @@ public class AutoHidingHeaderActivity extends AppCompatActivity {
         public int getAdapterItemCount() {
             return strings.size();
         }
+
+        @Override
+        public boolean hasHeader() {
+            return true;
+        }
     }
 
     private class DataHolder extends RecyclerView.ViewHolder {

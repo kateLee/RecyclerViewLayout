@@ -19,7 +19,6 @@ abstract public class AdvanceAdapter<VH extends RecyclerView.ViewHolder> extends
     private OnLoadMoreListener mOnLoadMoreListener;
     private static boolean isLoadingMore = false;
     private static boolean enableLoadMore = false;
-    private int headerCount = 1;
 
     @Override
     public RecyclerView.ViewHolder onCreateViewHolder(ViewGroup viewGroup, int viewType) {
@@ -29,11 +28,9 @@ abstract public class AdvanceAdapter<VH extends RecyclerView.ViewHolder> extends
                 DefaultViewHolder header = new DefaultViewHolder(getDefaultView(viewGroup));
                 view = onHeaderCreateView(header.rootView);
                 if (view != null) {
-                    headerCount = 1;
                     header.addView(view);
                     return new AdvanceHolder(header.itemView);
                 }
-                headerCount = 0;
                 return onAdapterCreateViewHolder(viewGroup, viewType);
 
             case TYPE_FOOTER:
@@ -136,7 +133,7 @@ abstract public class AdvanceAdapter<VH extends RecyclerView.ViewHolder> extends
 
     @Override
     public int getItemViewType(int position) {
-        if (position == getHeaderPosition() && headerCount != 0) {
+        if (position == getHeaderPosition() && getHeaderCount() != 0) {
             return TYPE_HEADER;
         }
         if (position == getFooterPosition()) {
@@ -163,8 +160,10 @@ abstract public class AdvanceAdapter<VH extends RecyclerView.ViewHolder> extends
 
     abstract public int getAdapterItemCount();
 
+    abstract public boolean hasHeader();
+
     int getHeaderCount() {
-        return headerCount;
+        return hasHeader() ? 1 : 0;
     }
 
     int getFooterCount() {
@@ -188,7 +187,7 @@ abstract public class AdvanceAdapter<VH extends RecyclerView.ViewHolder> extends
     }
 
     public boolean isFullSpan(int position) {
-        return (position == getHeaderPosition() && headerCount != 0)
+        return (position == getHeaderPosition() && getHeaderCount() != 0)
                 || position == getFooterPosition() || position == getLoadMorePosition();
     }
 
@@ -235,7 +234,7 @@ abstract public class AdvanceAdapter<VH extends RecyclerView.ViewHolder> extends
     }
 
     public void notifyHeaderViewChanged() {
-        if (headerCount != 0) {
+        if (getHeaderCount() != 0) {
             notifyItemChanged(getHeaderPosition());
         }
     }
