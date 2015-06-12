@@ -7,4 +7,5 @@
     <string name="category_demo_code">category_demo_code</string>
     <string name="AutoHidingHeader">AutoHidingHeader</string>
     <string name="ParallaxScrollingHeader">ParallaxScrollingHeader</string>
+    <string name="NoHeaderActivity">NoHeaderActivity</string>
 </resources>

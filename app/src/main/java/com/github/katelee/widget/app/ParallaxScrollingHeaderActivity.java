@@ -3,7 +3,7 @@ package com.github.katelee.widget.app;
 import android.os.Bundle;
 import android.os.Handler;
 import android.support.v4.widget.SwipeRefreshLayout;
-import android.support.v7.app.ActionBarActivity;
+import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -20,7 +20,7 @@ import java.util.List;
 /**
  * Created by Kate on 2015/5/8
  */
-public class ParallaxScrollingHeaderActivity extends ActionBarActivity {
+public class ParallaxScrollingHeaderActivity extends AppCompatActivity {
     RecyclerViewLayout recyclerViewLayout;
 
     LinearLayoutManager linearLayoutManager;
@@ -141,19 +141,19 @@ public class ParallaxScrollingHeaderActivity extends ActionBarActivity {
             viewHolder.itemView.findViewById(R.id.linearlayout).setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    recyclerViewLayout.setLayoutManager(linearLayoutManager);
+                    recyclerViewLayout.getRecyclerView(). setLayoutManager(linearLayoutManager);
                 }
             });
             viewHolder.itemView.findViewById(R.id.gridlayout).setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    recyclerViewLayout.setLayoutManager(gridLayoutManager);
+                    recyclerViewLayout.getRecyclerView().setLayoutManager(gridLayoutManager);
                 }
             });
             viewHolder.itemView.findViewById(R.id.staggeredgridlayout).setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    recyclerViewLayout.setLayoutManager(staggeredGridLayoutManager);
+                    recyclerViewLayout.getRecyclerView().setLayoutManager(staggeredGridLayoutManager);
                 }
             });
         }

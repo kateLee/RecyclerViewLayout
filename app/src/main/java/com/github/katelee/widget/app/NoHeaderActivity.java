@@ -18,16 +18,15 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * Created by Kate on 2015/5/8
+ * Created by Kate on 2015/6/10
  */
-public class AutoHidingHeaderActivity extends AppCompatActivity {
+public class NoHeaderActivity extends AppCompatActivity {
     RecyclerViewLayout recyclerViewLayout;
 
     LinearLayoutManager linearLayoutManager;
     StaggeredGridLayoutManager staggeredGridLayoutManager;
     GridLayoutManager gridLayoutManager;
     DataAdapter mAdapter;
-    View header;
 
     List<String> strings = new ArrayList<String>();
     Handler handler = new Handler();
@@ -36,7 +35,7 @@ public class AutoHidingHeaderActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        setContentView(R.layout.activity_recycler_view_layout);
+        setContentView(R.layout.activity_recycler_view_layout_no_header);
 
         recyclerViewLayout = (RecyclerViewLayout) findViewById(R.id.recyclerViewLayout);
 
@@ -89,8 +88,8 @@ public class AutoHidingHeaderActivity extends AppCompatActivity {
                         }
 
                         strings.addAll(tmp);
-                        mAdapter.notifyAdapterItemRangeInserted(mAdapter.getAdapterItemCount() - tmp.size(), 
-                        tmp.size());
+                        mAdapter.notifyAdapterItemRangeInserted(mAdapter.getAdapterItemCount() - tmp.size(),
+                                tmp.size());
                         mAdapter.setLoadingMore(false);
 
                         mAdapter.disableLoadMore();
@@ -100,21 +99,19 @@ public class AutoHidingHeaderActivity extends AppCompatActivity {
         });
         mAdapter.enableLoadMore();
 
-        recyclerViewLayout.setAutoHidingHeaderView(header =
-                LayoutInflater.from(this).inflate(R.layout.view_auto_hiding_header, null));
-        header.findViewById(R.id.linearlayout).setOnClickListener(new View.OnClickListener() {
+        findViewById(R.id.linearlayout).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 recyclerViewLayout.getRecyclerView().setLayoutManager(linearLayoutManager);
             }
         });
-        header.findViewById(R.id.gridlayout).setOnClickListener(new View.OnClickListener() {
+        findViewById(R.id.gridlayout).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 recyclerViewLayout.getRecyclerView().setLayoutManager(gridLayoutManager);
             }
         });
-        header.findViewById(R.id.staggeredgridlayout).setOnClickListener(new View.OnClickListener() {
+        findViewById(R.id.staggeredgridlayout).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 recyclerViewLayout.getRecyclerView().setLayoutManager(staggeredGridLayoutManager);
@@ -123,11 +120,6 @@ public class AutoHidingHeaderActivity extends AppCompatActivity {
     }
 
     private class DataAdapter extends RecyclerViewLayout.Adapter<DataHolder> {
-        @Override
-        protected View onHeaderCreateView(ViewGroup viewGroup) {
-            return LayoutInflater.from(viewGroup.getContext()).inflate(R.layout.view_header, viewGroup, false);
-        }
-
         @Override
         protected View onLoadMoreCreateView(ViewGroup viewGroup) {
             return LayoutInflater.from(viewGroup.getContext()).inflate(R.layout.view_loadmore, viewGroup, false);

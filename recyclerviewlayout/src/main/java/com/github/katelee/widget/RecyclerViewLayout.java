@@ -122,12 +122,10 @@ public class RecyclerViewLayout extends SwipeRefreshLayout {
 
     @Override
     public boolean canChildScrollUp() {
-
-        if (android.os.Build.VERSION.SDK_INT < 14) {
-            return mRecyclerView.getScrollY() > 0;
-        } else {
-            return ViewCompat.canScrollVertically(mRecyclerView, -1);
-        }
+        return ViewCompat.canScrollVertically(mRecyclerView, -1);// &&
+//                !(mRecyclerView.getChildAt(0) != null
+//                        && mRecyclerView.getChildAdapterPosition(mRecyclerView.getChildAt(0)) == 0
+//                        && mRecyclerView.getChildAt(0).getScrollY() == 0);
     }
 
     /**

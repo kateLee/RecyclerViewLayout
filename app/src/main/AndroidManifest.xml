@@ -33,6 +33,15 @@
             </intent-filter>
         </activity>
 
+        <activity
+                android:name=".NoHeaderActivity"
+                android:label="@string/NoHeaderActivity">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+                <category android:name="category_demo_code" />
+            </intent-filter>
+        </activity>
+
     </application>
 
 </manifest>
