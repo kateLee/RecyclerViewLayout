@@ -129,7 +129,8 @@ public class RecyclerViewLayout extends SwipeRefreshLayout {
     }
 
     /**
-     * @deprecated use {@link #getRecyclerView().setOnScrollListener(RecyclerView.OnScrollListener)} instead
+     * @deprecated Use {@link #getRecyclerView()}
+     * {@link com.github.katelee.widget.recyclerviewlayout.CustomRecyclerView#setOnScrollListener(RecyclerView.OnScrollListener)} instead
      */
     public void setOnScrollListener(RecyclerView.OnScrollListener listener) {
         mRecyclerView.setOnScrollListener(listener);
@@ -140,28 +141,31 @@ public class RecyclerViewLayout extends SwipeRefreshLayout {
     }
 
     /**
-     * @deprecated use {@link #getRecyclerView().setAdapter(CustomAdapter)} instead
+     * @deprecated Use {@link #getRecyclerView()}
+     * {@link com.github.katelee.widget.recyclerviewlayout.CustomRecyclerView#setAdapter(CustomAdapter)} instead
      */
     public void setAdapter(Adapter<? extends RecyclerView.ViewHolder> adapter) {
         mRecyclerView.setAdapter(adapter);
     }
 
     /**
-     * @deprecated use {@link #getRecyclerView().setLayoutManager(RecyclerView.LayoutManager)} instead
+     * @deprecated Use {@link #getRecyclerView()}
+     * {@link com.github.katelee.widget.recyclerviewlayout.CustomRecyclerView#setLayoutManager(RecyclerView.LayoutManager)} instead
      */
     public void setLayoutManager(RecyclerView.LayoutManager layout) {
         mRecyclerView.setLayoutManager(layout);
     }
      
     /**
-     * @deprecated use {@link #getRecyclerView().getLayoutManager()} instead
+     * @deprecated Use {@link #getRecyclerView()}
+     * {@link com.github.katelee.widget.recyclerviewlayout.CustomRecyclerView#getLayoutManager()} instead
      */
     public RecyclerView.LayoutManager getLayoutManager() {
         return mRecyclerView.getLayoutManager();
     }
 
     /**
-     * not recommend to use {@link #setParallaxScrollingHeaderView} at the same time.
+     * not recommend to Use {@link #setParallaxScrollingHeaderView} at the same time.
      * @param view
      */
     public void setAutoHidingHeaderView(View view) {
@@ -189,8 +193,8 @@ public class RecyclerViewLayout extends SwipeRefreshLayout {
     }
 
     /**
-     * not recommend to use {@link #setAutoHidingHeaderView} at the same time.
-     * @param view
+     * Not recommend to Use {@link #setAutoHidingHeaderView} at the same time.
+     * @param view The ParallaxScrollingHeaderView
      */
     public void setParallaxScrollingHeaderView(View view) {
         if (mParallaxScrollingHeader != null) {
@@ -225,42 +229,48 @@ public class RecyclerViewLayout extends SwipeRefreshLayout {
     }
 
     /**
-     * @deprecated use {@link #getRecyclerView().setRecyclerViewCilpChildren(boolean)} instead
+     * @deprecated Use {@link #getRecyclerView()}
+     * {@link com.github.katelee.widget.recyclerviewlayout.CustomRecyclerView#setClipChildren(boolean)} instead
      */
     public void setRecyclerViewCilpChildren(boolean clipChildren) {
         mRecyclerView.setClipChildren(clipChildren);
     }
 
     /**
-     * @deprecated use {@link #getRecyclerView().setClipToPadding(boolean)} instead
+     * @deprecated Use {@link #getRecyclerView()}
+     * {@link com.github.katelee.widget.recyclerviewlayout.CustomRecyclerView#setClipToPadding(boolean)} instead
      */
     public void setRecyclerViewClipToPadding(boolean clipToPadding) {
         mRecyclerView.setClipToPadding(clipToPadding);
     }
 
     /**
-     * @deprecated use {@link #getRecyclerView().setPadding(int, int, int, int)} instead
+     * @deprecated Use {@link #getRecyclerView()}
+     * {@link com.github.katelee.widget.recyclerviewlayout.CustomRecyclerView#setPadding(int, int, int, int)} instead
      */
     public void setRecyclerViewPadding(int left, int top, int right, int bottom) {
         mRecyclerView.setPadding(left, top, right, bottom);
     }
 
     /**
-     * @deprecated use {@link #getRecyclerView().setItemAnimator(RecyclerView.ItemAnimator)} instead
+     * @deprecated Use {@link #getRecyclerView()}
+     * {@link com.github.katelee.widget.recyclerviewlayout.CustomRecyclerView#setItemAnimator(RecyclerView.ItemAnimator)} instead
      */
     public void setRecyclerViewItemAnimator(RecyclerView.ItemAnimator animator) {
         mRecyclerView.setItemAnimator(animator);
     }
 
     /**
-     * @deprecated use {@link #getRecyclerView().addItemDecoration(RecyclerView.ItemDecoration)} instead
+     * @deprecated Use {@link #getRecyclerView()}
+     * {@link com.github.katelee.widget.recyclerviewlayout.CustomRecyclerView#addItemDecoration(RecyclerView.ItemDecoration)} instead
      */
     public void setRecyclerViewItemAnimator(RecyclerView.ItemDecoration decor) {
         mRecyclerView.addItemDecoration(decor);
     }
 
     /**
-     * @deprecated use {@link #getRecyclerView().addOnItemTouchListener(RecyclerView.OnItemTouchListener)} instead
+     * @deprecated Use {@link #getRecyclerView()}
+     * {@link com.github.katelee.widget.recyclerviewlayout.CustomRecyclerView#addOnItemTouchListener(RecyclerView.OnItemTouchListener)} instead
      */
     public void setRecyclerViewItemAnimator(RecyclerView.OnItemTouchListener listener) {
         mRecyclerView.addOnItemTouchListener(listener);
