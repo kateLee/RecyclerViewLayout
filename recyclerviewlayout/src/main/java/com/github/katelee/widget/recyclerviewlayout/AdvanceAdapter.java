@@ -29,9 +29,8 @@ abstract public class AdvanceAdapter<VH extends RecyclerView.ViewHolder> extends
                 view = onHeaderCreateView(header.rootView);
                 if (view != null) {
                     header.addView(view);
-                    return new AdvanceHolder(header.itemView);
                 }
-                return onAdapterCreateViewHolder(viewGroup, viewType);
+                return new AdvanceHolder(header.itemView);
 
             case TYPE_FOOTER:
                 view = onFooterCreateView(viewGroup);
@@ -83,7 +82,6 @@ abstract public class AdvanceAdapter<VH extends RecyclerView.ViewHolder> extends
     @SuppressWarnings("unchecked viewHolder type")
     @Override
     public void onBindViewHolder(RecyclerView.ViewHolder viewHolder, int position) {
-
         int viewType = getItemViewType(position);
         switch (viewType) {
             case TYPE_HEADER:
@@ -211,7 +209,14 @@ abstract public class AdvanceAdapter<VH extends RecyclerView.ViewHolder> extends
         notifyItemRemoved(getHeaderCount() + position);
     }
 
+    /**
+    * @deprecated Use {@link #notifyAdapterItemChanged(int)} instead
+    */
     public void notifyAdapterItemRangeChanged(int position) {
+        notifyAdapterItemChanged(position);
+    }
+
+    public void notifyAdapterItemChanged(int position) {
         notifyItemChanged(getHeaderCount() + position);
     }
 
@@ -257,7 +262,7 @@ abstract public class AdvanceAdapter<VH extends RecyclerView.ViewHolder> extends
 
     /**
      * cause it will invalid view, do not use this method in bindView
-     * @param flag
+     * @param flag LoadingMoreStatus
      */
     public void setLoadingMore(boolean flag) {
         isLoadingMore = flag;

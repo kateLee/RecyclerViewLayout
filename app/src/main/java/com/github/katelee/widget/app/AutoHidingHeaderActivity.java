@@ -123,10 +123,10 @@ public class AutoHidingHeaderActivity extends AppCompatActivity {
     }
 
     private class DataAdapter extends RecyclerViewLayout.Adapter<DataHolder> {
-        @Override
-        protected View onHeaderCreateView(ViewGroup viewGroup) {
-            return LayoutInflater.from(viewGroup.getContext()).inflate(R.layout.view_header, viewGroup, false);
-        }
+//        @Override
+//        protected View onHeaderCreateView(ViewGroup viewGroup) {
+//            return LayoutInflater.from(viewGroup.getContext()).inflate(R.layout.view_header, viewGroup, false);
+//        }
 
         @Override
         protected View onLoadMoreCreateView(ViewGroup viewGroup) {

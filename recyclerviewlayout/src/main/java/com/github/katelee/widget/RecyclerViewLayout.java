@@ -42,7 +42,8 @@ public class RecyclerViewLayout extends SwipeRefreshLayout {
         mFrameLayout.addView(mRecyclerView);
 
         mParallaxScrollingLayout = new FrameLayout(context);
-        mParallaxScrollingLayout.setLayoutParams(new LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.WRAP_CONTENT));
+        mParallaxScrollingLayout.setLayoutParams(new LayoutParams(LayoutParams.MATCH_PARENT,
+                LayoutParams.WRAP_CONTENT));
         mFrameLayout.addView(mParallaxScrollingLayout);
 
         initialize();
@@ -130,7 +131,9 @@ public class RecyclerViewLayout extends SwipeRefreshLayout {
 
     /**
      * @deprecated Use {@link #getRecyclerView()}
-     * {@link com.github.katelee.widget.recyclerviewlayout.CustomRecyclerView#setOnScrollListener(RecyclerView.OnScrollListener)} instead
+     * {@link
+     * com.github.katelee.widget.recyclerviewlayout.CustomRecyclerView#setOnScrollListener(
+     * RecyclerView.OnScrollListener)} instead
      */
     public void setOnScrollListener(RecyclerView.OnScrollListener listener) {
         mRecyclerView.setOnScrollListener(listener);
@@ -150,7 +153,9 @@ public class RecyclerViewLayout extends SwipeRefreshLayout {
 
     /**
      * @deprecated Use {@link #getRecyclerView()}
-     * {@link com.github.katelee.widget.recyclerviewlayout.CustomRecyclerView#setLayoutManager(RecyclerView.LayoutManager)} instead
+     * {@link
+     * com.github.katelee.widget.recyclerviewlayout.CustomRecyclerView#setLayoutManager(RecyclerView.LayoutManager)}
+     * instead
      */
     public void setLayoutManager(RecyclerView.LayoutManager layout) {
         mRecyclerView.setLayoutManager(layout);
@@ -176,6 +181,12 @@ public class RecyclerViewLayout extends SwipeRefreshLayout {
 
         mAutoHidingHeader = view;
         mRecyclerView.getAdapter().setAutoHidingHeaderView(view);
+        postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                mRecyclerView.scrollToPosition(0);
+            }
+        }, 100);
     }
 
     public void removeAutoHidingHeaderView() {
@@ -204,6 +215,12 @@ public class RecyclerViewLayout extends SwipeRefreshLayout {
 
         mParallaxScrollingHeader = view;
         mRecyclerView.getAdapter().setParallaxScrollingHeaderView(view);
+        postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                mRecyclerView.scrollToPosition(0);
+            }
+        }, 100);
     }
 
     public void removeParallaxScrollingHeaderView() {
@@ -254,7 +271,9 @@ public class RecyclerViewLayout extends SwipeRefreshLayout {
 
     /**
      * @deprecated Use {@link #getRecyclerView()}
-     * {@link com.github.katelee.widget.recyclerviewlayout.CustomRecyclerView#setItemAnimator(RecyclerView.ItemAnimator)} instead
+     * {@link
+     * com.github.katelee.widget.recyclerviewlayout.CustomRecyclerView#setItemAnimator(RecyclerView.ItemAnimator)}
+     * instead
      */
     public void setRecyclerViewItemAnimator(RecyclerView.ItemAnimator animator) {
         mRecyclerView.setItemAnimator(animator);
@@ -262,7 +281,9 @@ public class RecyclerViewLayout extends SwipeRefreshLayout {
 
     /**
      * @deprecated Use {@link #getRecyclerView()}
-     * {@link com.github.katelee.widget.recyclerviewlayout.CustomRecyclerView#addItemDecoration(RecyclerView.ItemDecoration)} instead
+     * {@link
+     * com.github.katelee.widget.recyclerviewlayout.CustomRecyclerView#addItemDecoration(RecyclerView.ItemDecoration)}
+     * instead
      */
     public void setRecyclerViewItemAnimator(RecyclerView.ItemDecoration decor) {
         mRecyclerView.addItemDecoration(decor);
@@ -270,7 +291,9 @@ public class RecyclerViewLayout extends SwipeRefreshLayout {
 
     /**
      * @deprecated Use {@link #getRecyclerView()}
-     * {@link com.github.katelee.widget.recyclerviewlayout.CustomRecyclerView#addOnItemTouchListener(RecyclerView.OnItemTouchListener)} instead
+     * {@link
+     * com.github.katelee.widget.recyclerviewlayout.CustomRecyclerView#addOnItemTouchListener(
+     * RecyclerView.OnItemTouchListener)} instead
      */
     public void setRecyclerViewItemAnimator(RecyclerView.OnItemTouchListener listener) {
         mRecyclerView.addOnItemTouchListener(listener);

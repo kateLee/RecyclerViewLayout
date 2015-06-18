@@ -29,41 +29,50 @@ public abstract class CustomAdapter<VH extends RecyclerView.ViewHolder> extends 
     public void setAutoHidingHeaderView(View view) {
         this.autoHidingHeaderView = view;
 
-        autoHidingHeaderView.getViewTreeObserver().addOnGlobalLayoutListener(
-                new OnItemGlobalLayoutListener(autoHidingHeaderView) {
-                    @Override
-                    @TargetApi(16)
-                    public void onGlobalLayout(View view) {
-                        // make sure it is not called anymore
-                        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN) {
-                            view.getViewTreeObserver().removeOnGlobalLayoutListener(this);
+        if (autoHidingHeaderView.getHeight() == 0) {
+            autoHidingHeaderView.getViewTreeObserver().addOnGlobalLayoutListener(
+                    new OnItemGlobalLayoutListener(autoHidingHeaderView) {
+                        @Override
+                        @TargetApi(16)
+                        public void onGlobalLayout(View view) {
+                            // make sure it is not called anymore
+                            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN) {
+                                view.getViewTreeObserver().removeOnGlobalLayoutListener(this);
+                            } else {
+                                view.getViewTreeObserver().removeGlobalOnLayoutListener(this);
+                            }
+                            notifyHeaderViewChanged();
                         }
-                        else {
-                            view.getViewTreeObserver().removeGlobalOnLayoutListener(this);
-                        }
-                        notifyHeaderViewChanged();
-                    }
-                });
+                    });
+        }
+        else {
+            notifyHeaderViewChanged();
+        }
     }
 
     public void setParallaxScrollingHeaderView(View view) {
         this.parallaxScrollingHeaderView = view;
 
-        parallaxScrollingHeaderView.getViewTreeObserver().addOnGlobalLayoutListener(
-                new OnItemGlobalLayoutListener(parallaxScrollingHeaderView) {
-                    @Override
-                    @TargetApi(16)
-                    public void onGlobalLayout(View view) {
-                        // make sure it is not called anymore
-                        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN) {
-                            view.getViewTreeObserver().removeOnGlobalLayoutListener(this);
+        if (parallaxScrollingHeaderView.getHeight() == 0) {
+            parallaxScrollingHeaderView.getViewTreeObserver().addOnGlobalLayoutListener(
+                    new OnItemGlobalLayoutListener(parallaxScrollingHeaderView) {
+                        @Override
+                        @TargetApi(16)
+                        public void onGlobalLayout(View view) {
+                            // make sure it is not called anymore
+                            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN) {
+                                view.getViewTreeObserver().removeOnGlobalLayoutListener(this);
+                            }
+                            else {
+                                view.getViewTreeObserver().removeGlobalOnLayoutListener(this);
+                            }
+                            notifyHeaderViewChanged();
                         }
-                        else {
-                            view.getViewTreeObserver().removeGlobalOnLayoutListener(this);
-                        }
-                        notifyHeaderViewChanged();
-                    }
-                });
+                    });
+        }
+        else {
+            notifyHeaderViewChanged();
+        }
     }
 
     private abstract class OnItemGlobalLayoutListener implements ViewTreeObserver.OnGlobalLayoutListener {
