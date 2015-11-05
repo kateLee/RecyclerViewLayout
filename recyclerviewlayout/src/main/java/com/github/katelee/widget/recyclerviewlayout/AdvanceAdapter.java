@@ -1,5 +1,6 @@
 package com.github.katelee.widget.recyclerviewlayout;
 
+import android.support.v7.widget.OrientationHelper;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.StaggeredGridLayoutManager;
 import android.view.LayoutInflater;
@@ -19,6 +20,10 @@ abstract public class AdvanceAdapter<VH extends RecyclerView.ViewHolder> extends
     private OnLoadMoreListener mOnLoadMoreListener;
     private static boolean isLoadingMore = false;
     private static boolean enableLoadMore = false;
+
+    protected int getOrientation() {
+        return OrientationHelper.VERTICAL;
+    }
 
     @Override
     public RecyclerView.ViewHolder onCreateViewHolder(ViewGroup viewGroup, int viewType) {
@@ -118,7 +123,14 @@ abstract public class AdvanceAdapter<VH extends RecyclerView.ViewHolder> extends
 
     protected void onLoadMoreBindViewHolder(RecyclerView.ViewHolder viewHolder) {
         ViewGroup.LayoutParams vlp = viewHolder.itemView.getLayoutParams();
-        vlp.height = enableLoadMore ? ViewGroup.LayoutParams.WRAP_CONTENT : 0;
+        if (getOrientation() == OrientationHelper.VERTICAL) {
+            vlp.width = enableLoadMore ? ViewGroup.LayoutParams.MATCH_PARENT : 0;
+            vlp.height = enableLoadMore ? ViewGroup.LayoutParams.WRAP_CONTENT : 0;
+        }
+        else {
+            vlp.width = enableLoadMore ? ViewGroup.LayoutParams.WRAP_CONTENT : 0;
+            vlp.height = enableLoadMore ? ViewGroup.LayoutParams.MATCH_PARENT : 0;
+        }
         viewHolder.itemView.setLayoutParams(vlp);
 
         if (enableLoadMore && mOnLoadMoreListener != null && !isLoadingMore) {
@@ -160,11 +172,11 @@ abstract public class AdvanceAdapter<VH extends RecyclerView.ViewHolder> extends
 
     abstract public boolean hasHeader();
 
-    int getHeaderCount() {
+    public int getHeaderCount() {
         return hasHeader() ? 1 : 0;
     }
 
-    int getFooterCount() {
+    public int getFooterCount() {
         return 2;
     }
 
@@ -172,6 +184,9 @@ abstract public class AdvanceAdapter<VH extends RecyclerView.ViewHolder> extends
      * cause it will invalid view, do not use this method in bindView
      */
     public void disableLoadMore() {
+        if (!isLoadingMore) {
+            return;
+        }
         enableLoadMore = false;
         notifyLoadMoreViewChanged();
     }
@@ -180,8 +195,15 @@ abstract public class AdvanceAdapter<VH extends RecyclerView.ViewHolder> extends
      * cause it will invalid view, do not use this method in bindView
      */
     public void enableLoadMore() {
+        if (isLoadingMore) {
+            return;
+        }
         enableLoadMore = true;
         notifyLoadMoreViewChanged();
+    }
+
+    public boolean getLoadMoreEnable() {
+        return enableLoadMore;
     }
 
     public boolean isFullSpan(int position) {
@@ -236,6 +258,14 @@ abstract public class AdvanceAdapter<VH extends RecyclerView.ViewHolder> extends
                 hold_view.setLayoutParams(vlp);
             }
         }
+
+        public void setHoldWidth(int width) {
+            if (hold_view != null) {
+                ViewGroup.LayoutParams vlp = hold_view.getLayoutParams();
+                vlp.width = width;
+                hold_view.setLayoutParams(vlp);
+            }
+        }
     }
 
     public void notifyHeaderViewChanged() {
@@ -265,6 +295,9 @@ abstract public class AdvanceAdapter<VH extends RecyclerView.ViewHolder> extends
      * @param flag LoadingMoreStatus
      */
     public void setLoadingMore(boolean flag) {
+        if (isLoadingMore == flag) {
+            return;
+        }
         isLoadingMore = flag;
         notifyLoadMoreViewChanged();
     }
