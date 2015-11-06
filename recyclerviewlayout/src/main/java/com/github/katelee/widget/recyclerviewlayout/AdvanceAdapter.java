@@ -184,7 +184,7 @@ abstract public class AdvanceAdapter<VH extends RecyclerView.ViewHolder> extends
      * cause it will invalid view, do not use this method in bindView
      */
     public void disableLoadMore() {
-        if (!isLoadingMore) {
+        if (!enableLoadMore) {
             return;
         }
         enableLoadMore = false;
@@ -195,7 +195,7 @@ abstract public class AdvanceAdapter<VH extends RecyclerView.ViewHolder> extends
      * cause it will invalid view, do not use this method in bindView
      */
     public void enableLoadMore() {
-        if (isLoadingMore) {
+        if (enableLoadMore) {
             return;
         }
         enableLoadMore = true;
