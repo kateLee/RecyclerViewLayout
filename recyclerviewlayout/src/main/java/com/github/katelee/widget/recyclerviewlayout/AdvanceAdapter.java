@@ -152,7 +152,7 @@ abstract public class AdvanceAdapter<VH extends RecyclerView.ViewHolder> extends
         if (position == getLoadMorePosition()) {
             return TYPE_LOAD_MORE;
         }
-        int viewType = getAdapterItemViewType(position);
+        int viewType = getAdapterItemViewType(position - getHeaderCount());
         if (viewType == TYPE_HEADER || viewType == TYPE_FOOTER || viewType == TYPE_LOAD_MORE) {
             throw new IllegalArgumentException("These viewTypes is for special case!");
         }
