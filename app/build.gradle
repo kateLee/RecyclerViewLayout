@@ -1,6 +1,6 @@
 buildscript {
     repositories {
-        jcenter()
+        jcenter({url "http://jcenter.bintray.com/"})
     }
     dependencies {
         classpath 'com.android.tools.build:gradle:2.1.2'
@@ -9,7 +9,7 @@ buildscript {
 apply plugin: 'com.android.application'
 
 repositories {
-    jcenter()
+    jcenter({url "http://jcenter.bintray.com/"})
 }
 
 android {
