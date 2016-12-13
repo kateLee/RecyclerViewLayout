@@ -78,8 +78,14 @@ abstract public class AdvanceAdapter<VH extends RecyclerView.ViewHolder> extends
     }
 
     private View getDefaultView(ViewGroup viewGroup) {
-        return LayoutInflater.from(viewGroup.getContext()).inflate(R.layout.view_recyclerviewlayout_default,
-                viewGroup, false);
+        if (getOrientation() == OrientationHelper.VERTICAL) {
+            return LayoutInflater.from(viewGroup.getContext()).inflate(R.layout.view_recyclerviewlayout_default,
+                    viewGroup, false);
+        }
+        else {
+            return LayoutInflater.from(viewGroup.getContext()).inflate(R.layout.view_recyclerviewlayout_default_horizontal,
+                    viewGroup, false);
+        }
     }
 
     protected abstract VH onAdapterCreateViewHolder(ViewGroup viewGroup, int viewType);
