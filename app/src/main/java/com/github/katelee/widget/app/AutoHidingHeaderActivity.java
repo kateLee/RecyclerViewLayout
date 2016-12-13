@@ -146,7 +146,8 @@ public class AutoHidingHeaderActivity extends AppCompatActivity {
 
         @Override
         protected void onAdapterBindViewHolder(DataHolder viewHolder, int position) {
-            viewHolder.label.setText("position: " + strings.get(position));
+            String text = "position: " + strings.get(position);
+            viewHolder.label.setText(text);
             ViewGroup.LayoutParams layoutParams = viewHolder.itemView.getLayoutParams();
             layoutParams.height = 150 + (position + 1) * 20;
             viewHolder.itemView.setLayoutParams(layoutParams);
