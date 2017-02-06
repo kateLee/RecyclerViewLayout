@@ -37,15 +37,15 @@ Base on android.support.v7.RecyclerView
 ```
 buildscript {
     repositories {
-        jcenter()
+        jcenter({url "http://jcenter.bintray.com/"})
     }
 }
 
 repositories {
-    jcenter()
+        jcenter({url "http://jcenter.bintray.com/"})
 }
 
 dependencies {
-    compile 'com.github.katelee.widget:recyclerviewlayout:0.9.7'
+    compile 'com.github.katelee.widget:recyclerviewlayout:0.9.8'
 }
 ```

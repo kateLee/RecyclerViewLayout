@@ -5,7 +5,7 @@ def siteUrl = "https://github.com/kateLee/RecyclerViewLayout"
 def gitUrl = "https://github.com/kateLee/RecyclerViewLayout.git"
 
 group = "com.github.katelee.widget"
-version = "0.9.7"
+version = "0.9.8"
 
 install {
     repositories.mavenInstaller {
