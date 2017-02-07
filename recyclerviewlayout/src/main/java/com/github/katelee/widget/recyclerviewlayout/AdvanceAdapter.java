@@ -238,8 +238,9 @@ abstract public class AdvanceAdapter<VH extends RecyclerView.ViewHolder> extends
     }
 
     /**
-    * @deprecated Use {@link #notifyAdapterItemChanged(int)} instead
-    */
+     * @deprecated Use {@link #notifyAdapterItemChanged(int)} instead
+     * @param position thr change item position
+     */
     public void notifyAdapterItemRangeChanged(int position) {
         notifyAdapterItemChanged(position);
     }

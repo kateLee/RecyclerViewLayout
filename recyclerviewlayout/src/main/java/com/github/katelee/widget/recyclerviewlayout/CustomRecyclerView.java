@@ -37,6 +37,7 @@ public class CustomRecyclerView extends RecyclerView {
 
     /**
      * @deprecated use {@link #setAdapter(CustomAdapter)} instead
+     * @param adapter the adapter for view
      */
     @Override
     public void setAdapter(Adapter adapter) {
